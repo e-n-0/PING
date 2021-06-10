@@ -6,11 +6,17 @@ import fr.epita.assistants.myide.domain.entity.Feature;
 import fr.epita.assistants.myide.domain.entity.Project;
 import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Maven;
 
+import org.apache.maven.*;
+
 public class CleanFeature implements Feature {
 
     @Override
     public @NotNull ExecutionReport execute(Project project, Object... params) {
         // TODO Auto-generated method stub
+
+        // Delete artifacts from target directory
+
+
         return null;
     }
 
