@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.lib.RepositoryCache;
 import org.eclipse.jgit.util.FS;
 
@@ -33,8 +33,20 @@ public class AddFeature implements Feature {
         }
 
         // Do the add command
+        AddCommand addCommand = git.add();
 
-        return RicainsExecutionReport.create(false);
+        // Add all files in params
+        for (Object filepattern : params)
+            addCommand.addFilepattern((String) filepattern);
+
+        DirCache dirCache = null;
+        try {
+            dirCache = addCommand.call();
+        } catch (Exception e) {
+            return RicainsExecutionReport.create(false);
+        }
+
+        return RicainsExecutionReport.create(dirCache != null);
     }
 
     @Override
