@@ -10,7 +10,9 @@ import fr.epita.assistants.myide.domain.entity.Node;
 import fr.epita.assistants.myide.domain.entity.Project;
 import fr.epita.assistants.myide.domain.service.NodeService;
 import fr.epita.assistants.myide.domain.service.ProjectService;
+import fr.epita.assistants.myide.ricains.entity.RicainsNode;
 import fr.epita.assistants.myide.ricains.entity.RicainsProject;
+import fr.epita.assistants.myide.ricains.entity.features.RicainsExecutionReport;
 
 public class RicainsProjectService implements ProjectService {
 
@@ -24,16 +26,23 @@ public class RicainsProjectService implements ProjectService {
 
     @Override
     public @NotNull Project load(@NotNull Path root) {
-        // Node rootNode = this.nodeService.create(folder, name, type);
-        RicainsProject project = new RicainsProject(null);
-        return project;
+        Node.Types type = Node.Types.FILE;
+        if (root.toFile().isDirectory()) {
+            type = Node.Types.FOLDER;
+        }
+        Node rootNode = new RicainsNode(root.getFileName().toString(), type);
+        return new RicainsProject(rootNode);
     }
 
     @Override
     public @NotNull Feature.ExecutionReport execute(@NotNull Project project, @NotNull Feature.Type featureType,
             Object... params) {
-        // TODO Auto-generated method stub
-        return null;
+
+        var optionalFeature = project.getFeature(featureType);
+        if (optionalFeature.isPresent())
+            return optionalFeature.get().execute(project, params);
+
+        return RicainsExecutionReport.create(false);
     }
 
     @Override
