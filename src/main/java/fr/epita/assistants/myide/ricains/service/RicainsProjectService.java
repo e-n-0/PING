@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull;
 
 import fr.epita.assistants.MyIde.Configuration;
 import fr.epita.assistants.myide.domain.entity.Feature;
-import fr.epita.assistants.myide.domain.entity.Node;
 import fr.epita.assistants.myide.domain.entity.Project;
 import fr.epita.assistants.myide.domain.service.NodeService;
 import fr.epita.assistants.myide.domain.service.ProjectService;
