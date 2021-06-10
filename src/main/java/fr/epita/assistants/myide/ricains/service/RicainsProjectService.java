@@ -6,11 +6,13 @@ import javax.validation.constraints.NotNull;
 
 import fr.epita.assistants.MyIde.Configuration;
 import fr.epita.assistants.myide.domain.entity.Feature;
+import fr.epita.assistants.myide.domain.entity.Node;
 import fr.epita.assistants.myide.domain.entity.Project;
 import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Any;
 import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Git;
 import fr.epita.assistants.myide.domain.service.NodeService;
 import fr.epita.assistants.myide.domain.service.ProjectService;
+import fr.epita.assistants.myide.ricains.entity.RicainsNode;
 import fr.epita.assistants.myide.ricains.entity.RicainsProject;
 import fr.epita.assistants.myide.ricains.entity.features.FeatureGit;
 import fr.epita.assistants.myide.ricains.entity.features.FeatureMaven;
@@ -28,9 +30,12 @@ public class RicainsProjectService implements ProjectService {
 
     @Override
     public @NotNull Project load(@NotNull Path root) {
-        // Node rootNode = this.nodeService.create(folder, name, type);
-        RicainsProject project = new RicainsProject(null);
-        return project;
+        Node.Types type = Node.Types.FILE;
+        if (root.toFile().isDirectory()) {
+            type = Node.Types.FOLDER;
+        }
+        Node rootNode = new RicainsNode(root.getFileName().toString(), type);
+        return new RicainsProject(rootNode);
     }
 
     @Override
