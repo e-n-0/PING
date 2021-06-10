@@ -6,27 +6,11 @@ import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
-import fr.epita.assistants.myide.domain.entity.Aspect;
-import fr.epita.assistants.myide.domain.entity.Feature;
-import fr.epita.assistants.myide.domain.entity.Node;
-import fr.epita.assistants.myide.domain.entity.Project;
-import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Any;
-import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Git;
-import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Maven;
-import fr.epita.assistants.myide.ricains.entity.features.git.AddFeature;
-import fr.epita.assistants.myide.ricains.entity.features.git.CommitFeature;
-import fr.epita.assistants.myide.ricains.entity.features.git.PullFeature;
-import fr.epita.assistants.myide.ricains.entity.features.git.PushFeature;
-import fr.epita.assistants.myide.ricains.entity.features.maven.CleanFeature;
-import fr.epita.assistants.myide.ricains.entity.features.maven.CompileFeature;
-import fr.epita.assistants.myide.ricains.entity.features.maven.ExecFeature;
-import fr.epita.assistants.myide.ricains.entity.features.maven.InstallFeature;
-import fr.epita.assistants.myide.ricains.entity.features.maven.PackageFeature;
-import fr.epita.assistants.myide.ricains.entity.features.maven.TestFeature;
-import fr.epita.assistants.myide.ricains.entity.features.maven.TreeFeature;
-import fr.epita.assistants.myide.ricains.entity.features.project.CleanupFeature;
-import fr.epita.assistants.myide.ricains.entity.features.project.DistFeature;
-import fr.epita.assistants.myide.ricains.entity.features.project.SearchFeature;
+import fr.epita.assistants.myide.domain.entity.*;
+import fr.epita.assistants.myide.domain.entity.Mandatory.Features.*;
+import fr.epita.assistants.myide.ricains.entity.features.git.*;
+import fr.epita.assistants.myide.ricains.entity.features.maven.*;
+import fr.epita.assistants.myide.ricains.entity.features.project.*;
 
 public class RicainsProject implements Project {
 

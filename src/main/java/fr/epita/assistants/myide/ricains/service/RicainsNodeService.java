@@ -105,17 +105,17 @@ public class RicainsNodeService implements NodeService {
                 e.printStackTrace();
             }
         }
+
+        var newPath = Path.of(destinationFolder.toString(), nodeToMove.getPath().toString());
+
         try {
-            Files.move(nodeToMove.getPath(), Paths
-                    .get(destinationFolder.getPath().toString() + "\\" + nodeToMove.getPath().getFileName().toString()),
-                    StandardCopyOption.REPLACE_EXISTING);
+            Files.move(nodeToMove.getPath(), newPath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
+            return nodeToMove;
         }
 
-        RicainsNode nodeMoved = new RicainsNode(
-                destinationFolder.getPath().toString() + "\\" + nodeToMove.getPath().toFile().getName(),
-                nodeToMove.getType());
+        RicainsNode nodeMoved = new RicainsNode(newPath.toString(), nodeToMove.getType());
         delete(nodeToMove);
         return nodeMoved;
     }
