@@ -36,12 +36,15 @@ public class RicainsNode implements Node {
         if (type != Types.FILE) {
             File folder = path.toFile();
             File[] listFile = folder.listFiles();
+            if (listFile == null) {
+                return children;
+            }
 
             for (int i = 0; i < listFile.length; i++) {
                 File selected = listFile[i];
-                String filename = Paths.get(selected.getPath()).toString();
+                String fileName = Paths.get(selected.getPath()).toString();
                 Type selectedType = selected.isFile() ? Types.FILE : Types.FOLDER;
-                RicainsNode node = new RicainsNode(filename, selectedType);
+                RicainsNode node = new RicainsNode(fileName, selectedType);
                 children.add(node);
             }
         }
