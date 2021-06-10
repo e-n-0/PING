@@ -27,23 +27,21 @@ public class RicainsNodeService implements NodeService {
             }
         }
         File file = node.getPath().toFile();
-        String mystring = "";
+        String myString = "";
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                mystring += line + "\n";
+                myString = myString + (line + "\n");
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String mystring2 = mystring.substring(0, from);
-        mystring2 += insertedContent;
-        mystring2 += mystring.substring(to + 1);
+        String myString2 = myString.substring(0, from);
+        myString2 = myString2 + insertedContent;
+        myString2 = myString2 + myString.substring(to + 1);
         try {
             FileWriter fw = new FileWriter(file);
-            fw.write(mystring2);
+            fw.write(myString2);
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -55,16 +53,15 @@ public class RicainsNodeService implements NodeService {
     public boolean delete(Node node) {
         File file = node.getPath().toFile();
         if (file.exists()) {
-            file.delete();
-            return true;
+            return file.delete();
         }
         return false;
     }
 
     @Override
     public Node create(Node folder, String name, Type type) {
-        Node mynode = new RicainsNode(folder, name, type);
-        return mynode;
+        String path = folder.getPath().getFileName().toString() + name;
+        return new RicainsNode(path, type);
     }
 
     @Override
@@ -74,9 +71,9 @@ public class RicainsNodeService implements NodeService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        RicainsNode nodemoved = new RicainsNode(destinationFolder, destinationFolder.getPath().toString() + nodeToMove.getPath().toFile().getName(), nodeToMove.getType());
+        RicainsNode nodeMoved = new RicainsNode(destinationFolder.getPath().toString() + nodeToMove.getPath().toFile().getName(), nodeToMove.getType());
         delete(nodeToMove);
-        return nodemoved;
+        return nodeMoved;
     }
 
 }
