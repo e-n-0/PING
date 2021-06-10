@@ -12,27 +12,14 @@ import fr.epita.assistants.myide.domain.entity.Node;
 
 public class RicainsNode implements Node {
 
-    private final Path path;
+    private Path path;
     private final Type type;
-    private final List<Node> childrens;
+    private Node parent;
 
-    public RicainsNode(String name, Type type) {
+    public RicainsNode(Node Folder, String name, Type type) {
+        this.parent = Folder;
         this.path = Paths.get(name);
         this.type = type;
-        this.childrens = new ArrayList<>();
-
-        if (type != Types.FILE) {
-            File folder = path.toFile();
-            File[] listfile = folder.listFiles();
-
-            for (int i = 0; i < listfile.length; i++) {
-                File selected = listfile[i];
-                String filename = Paths.get(selected.getPath()).toString();
-                Type selectedType = selected.isFile() ? Types.FILE : Types.FOLDER;
-                RicainsNode node = new RicainsNode(filename, selectedType);
-                this.childrens.add(node);
-            }
-        }
     }
 
     @Override
@@ -47,7 +34,20 @@ public class RicainsNode implements Node {
 
     @Override
     public @NotNull List<@NotNull Node> getChildren() {
-        return this.childrens;
+        List<Node> childrens = new ArrayList<>();
+        if (type != Types.FILE) {
+            File folder = path.toFile();
+            File[] listfile = folder.listFiles();
+
+            for (int i = 0; i < listfile.length; i++) {
+                File selected = listfile[i];
+                String filename = Paths.get(selected.getPath()).toString();
+                Type selectedType = selected.isFile() ? Types.FILE : Types.FOLDER;
+                RicainsNode node = new RicainsNode(this, filename, selectedType);
+                childrens.add(node);
+            }
+        }
+        return childrens;
     }
 
 }
