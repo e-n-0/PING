@@ -12,7 +12,7 @@ import fr.epita.assistants.myide.domain.entity.Node;
 
 public class RicainsNode implements Node {
 
-    private final Path path;
+    private Path path;
     private final Type type;
 
     public RicainsNode(String path, Type type) {

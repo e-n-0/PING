@@ -60,7 +60,7 @@ public class RicainsNodeService implements NodeService {
 
     @Override
     public Node create(Node folder, String name, Type type) {
-        String path = folder.getPath().getFileName().toString() + name;
+        String path = folder.getPath().toString() + "/" + name;
         return new RicainsNode(path, type);
     }
 
@@ -71,6 +71,7 @@ public class RicainsNodeService implements NodeService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         RicainsNode nodeMoved = new RicainsNode(destinationFolder.getPath().toString() + nodeToMove.getPath().toFile().getName(), nodeToMove.getType());
         delete(nodeToMove);
         return nodeMoved;
