@@ -14,12 +14,10 @@ public class RicainsNode implements Node {
 
     private Path path;
     private final Type type;
-    private List<Node> children;
 
-    public RicainsNode(String path, Type type, List<Node> children) {
+    public RicainsNode(String path, Type type) {
         this.path = Paths.get(path);
         this.type = type;
-        this.children = children;
     }
 
     @Override

@@ -80,7 +80,7 @@ public class RicainsNodeService implements NodeService {
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
-        mynode = new RicainsNode(path, type, null);
+        mynode = new RicainsNode(path, type);
         nodes.add(mynode);
         return mynode;
     }
