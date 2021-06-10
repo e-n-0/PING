@@ -4,6 +4,7 @@ import java.io.File;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.maven.Maven;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.RepositoryCache;
@@ -21,8 +22,8 @@ public class CommitFeature implements Feature {
     @Override
     public @NotNull ExecutionReport execute(Project project, Object... params) {
         // We will only use one param
-        if (params.length < 1)
-            return RicainsExecutionReport.create(false);
+        // if (params.length < 1)
+        // return RicainsExecutionReport.create(false);
 
         // Check if a git repo is existing in the project folder
         File gitFile = project.getRootNode().getPath().toFile();
@@ -35,7 +36,7 @@ public class CommitFeature implements Feature {
         }
 
         // Do the commit command
-        String commitMessage = (String) params[0];
+        String commitMessage = "IDE Commit";
         CommitCommand commitCommand = git.commit().setMessage(commitMessage);
         RevCommit revCommit = null;
         try {

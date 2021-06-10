@@ -33,8 +33,10 @@ public class AddFeature implements Feature {
         AddCommand addCommand = git.add();
 
         // Add all files in params
-        for (Object filepattern : params)
-            addCommand.addFilepattern((String) filepattern);
+        // for (Object filepattern : params)
+        // addCommand.addFilepattern((String) filepattern);
+
+        addCommand.addFilepattern(".");
 
         DirCache dirCache = null;
         try {
