@@ -14,7 +14,7 @@ public class Main {
     public static void main(String[] args) {
         MyIde ide = new MyIde();
         ProjectService projectService = ide.init(new Configuration(Paths.get("."), Paths.get(".")));
-        Project project = projectService.load(Paths.get("./testfolder"));
+        Project project = projectService.load(Paths.get("."));
 
         // var report =
         // project.getFeature(Mandatory.Features.Git.PUSH).get().execute(project,
@@ -22,13 +22,16 @@ public class Main {
         // System.out.println("report: " + report.isSuccess());
 
         Node myroot = project.getRootNode();
+
+        Log.log(myroot.getChildren().size() + " - " + myroot.getType().toString());
+
         NodeService service = projectService.getNodeService();
         // Log.log(myroot.getPath().toString());
 
-        Node todel = service.create(myroot, "jesuisundossier", Node.Types.FOLDER);
-        Log.log(todel.getPath().toString());
-        Node insiedToDel = service.create(todel, "ouinon", Node.Types.FILE);
-        Log.log(insiedToDel.getPath().toAbsolutePath().toString());
+        // Node todel = service.create(myroot, "jesuisundossier", Node.Types.FOLDER);
+        // Log.log(todel.getPath().toString());
+        // Node insiedToDel = service.create(todel, "ouinon", Node.Types.FILE);
+        // Log.log(insiedToDel.getPath().toAbsolutePath().toString());
 
         /*
          * var list = myroot.getChildren(); for (Node n : list) { var list2 =
