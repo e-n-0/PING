@@ -8,15 +8,19 @@ import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Maven;
 import fr.epita.assistants.myide.ricains.entity.features.RicainsExecutionReport;
 
 import java.lang.Process;
+import java.nio.file.Path;
 
 public class InstallFeature implements Feature {
 
     @Override
     public @NotNull ExecutionReport execute(Project project, Object... params) {
-        // TODO Auto-generated method stub
+        String path = project.getRootNode().getPath().toString();
+        String cmdParams = "mvn install" + path;
+        for (Object filepattern : params)
+            cmdParams += params;
         Process p;
         try {
-            p = Runtime.getRuntime().exec("ls -aF");
+            p = Runtime.getRuntime().exec(cmdParams);
             p.waitFor();
             RicainsExecutionReport ret = RicainsExecutionReport.create((p.exitValue() == 0));
             return ret;
