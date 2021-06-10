@@ -43,7 +43,7 @@ public class RicainsNodeService implements NodeService {
             myString2 = myString.substring(0, from);
             myString2 = myString2 + s;
             if (myString.length() > to) {
-                myString2 = myString2 + myString.substring(to);
+                myString2 = myString2 + myString.substring(to + 1);
             }
         } else {
             myString2 = myString + s;
@@ -106,7 +106,7 @@ public class RicainsNodeService implements NodeService {
             }
         }
 
-        var newPath = Path.of(destinationFolder.toString(), nodeToMove.getPath().toString());
+        var newPath = Path.of(destinationFolder.getPath().toString(), nodeToMove.getPath().toString());
 
         try {
             Files.move(nodeToMove.getPath(), newPath, StandardCopyOption.REPLACE_EXISTING);
