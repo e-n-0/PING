@@ -23,20 +23,18 @@ public class RicainsProject implements Project {
 
     @Override
     public @NotNull Node getRootNode() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.rootNode;
     }
 
     @Override
     public @NotNull Set<Aspect> getAspects() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.aspects;
     }
 
     @Override
     public @NotNull Optional<Feature> getFeature(@NotNull Feature.Type featureType) {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO
+        return Optional.empty();
     }
 
 }
