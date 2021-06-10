@@ -11,6 +11,7 @@ import java.util.List;
 
 import fr.epita.assistants.myide.domain.entity.Node;
 import fr.epita.assistants.myide.domain.entity.Node.Type;
+import fr.epita.assistants.myide.domain.entity.Node.Types;
 import fr.epita.assistants.myide.domain.service.NodeService;
 import fr.epita.assistants.myide.ricains.entity.RicainsNode;
 
@@ -44,8 +45,7 @@ public class RicainsNodeService implements NodeService {
             if (myString.length() > to) {
                 myString2 = myString2 + myString.substring(to + 1);
             }
-        }
-        else {
+        } else {
             myString2 = myString + s;
         }
 
@@ -75,11 +75,19 @@ public class RicainsNodeService implements NodeService {
         Node mynode;
         String path = Path.of(folder.getPath().toString(), name).toString();
         File myFile = new File(path);
-        try {
-            myFile.createNewFile();
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
+
+        if (type.equals(Types.FOLDER))
+            myFile.mkdirs();
+        else {
+            try {
+                if (!myFile.createNewFile())
+                    throw new Exception("Failed to create a file");
+            } catch (Exception ioException) {
+                ioException.printStackTrace();
+                throw new RuntimeException("hard fail");
+            }
         }
+
         mynode = new RicainsNode(path, type);
         nodes.add(mynode);
         return mynode;
@@ -95,12 +103,16 @@ public class RicainsNodeService implements NodeService {
             }
         }
         try {
-            Files.move(nodeToMove.getPath(), Paths.get(destinationFolder.getPath().toString() + "\\" + nodeToMove.getPath().getFileName().toString()), StandardCopyOption.REPLACE_EXISTING);
+            Files.move(nodeToMove.getPath(), Paths
+                    .get(destinationFolder.getPath().toString() + "\\" + nodeToMove.getPath().getFileName().toString()),
+                    StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        RicainsNode nodeMoved = new RicainsNode(destinationFolder.getPath().toString() + "\\" + nodeToMove.getPath().toFile().getName(), nodeToMove.getType());
+        RicainsNode nodeMoved = new RicainsNode(
+                destinationFolder.getPath().toString() + "\\" + nodeToMove.getPath().toFile().getName(),
+                nodeToMove.getType());
         delete(nodeToMove);
         return nodeMoved;
     }

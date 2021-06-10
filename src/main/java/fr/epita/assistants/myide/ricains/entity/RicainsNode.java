@@ -32,8 +32,7 @@ public class RicainsNode implements Node {
 
     @Override
     public @NotNull List<@NotNull Node> getChildren() {
-        return null;
-        /*List<Node> children = new ArrayList<>();
+        List<Node> children = new ArrayList<>();
         if (type != Types.FILE) {
             File folder = path.toFile();
             File[] listFile = folder.listFiles();
@@ -45,11 +44,11 @@ public class RicainsNode implements Node {
                 File selected = listFile[i];
                 String fileName = Paths.get(selected.getPath()).toString();
                 Type selectedType = selected.isFile() ? Types.FILE : Types.FOLDER;
-                RicainsNode node = new RicainsNode(fileName, selectedType, null);
+                RicainsNode node = new RicainsNode(fileName, selectedType);
                 children.add(node);
             }
         }
-        return children;*/
+        return children;
     }
 
 }
