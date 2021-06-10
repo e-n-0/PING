@@ -7,13 +7,12 @@ import javax.validation.constraints.NotNull;
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.dircache.DirCache;
-import org.eclipse.jgit.lib.RepositoryCache;
-import org.eclipse.jgit.util.FS;
 
 import fr.epita.assistants.myide.domain.entity.Feature;
 import fr.epita.assistants.myide.domain.entity.Project;
 import fr.epita.assistants.myide.domain.entity.Mandatory.Features;
 import fr.epita.assistants.myide.ricains.entity.features.RicainsExecutionReport;
+import fr.epita.assistants.utils.Log;
 
 public class AddFeature implements Feature {
 
@@ -22,13 +21,11 @@ public class AddFeature implements Feature {
 
         // Check if a git repo is existing in the project folder
         File gitFile = project.getRootNode().getPath().toFile();
-        if (!RepositoryCache.FileKey.isGitRepository(gitFile, FS.DETECTED))
-            return RicainsExecutionReport.create(false);
-
         Git git = null;
         try {
             git = Git.init().setDirectory(gitFile).call();
         } catch (Exception e) {
+            Log.err(e);
             return RicainsExecutionReport.create(false);
         }
 
@@ -36,13 +33,16 @@ public class AddFeature implements Feature {
         AddCommand addCommand = git.add();
 
         // Add all files in params
-        for (Object filepattern : params)
-            addCommand.addFilepattern((String) filepattern);
+        // for (Object filepattern : params)
+        // addCommand.addFilepattern((String) filepattern);
+
+        addCommand.addFilepattern(".");
 
         DirCache dirCache = null;
         try {
             dirCache = addCommand.call();
         } catch (Exception e) {
+            Log.err(e);
             return RicainsExecutionReport.create(false);
         }
 
