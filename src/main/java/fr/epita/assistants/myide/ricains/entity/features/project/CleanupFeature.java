@@ -55,7 +55,7 @@ public class CleanupFeature implements Feature {
         }
 
         // Search in all files of the project (root node) and delete files
-
+        removeRecusiveFiles(project.getRootNode(), filenameToDelete);
         return RicainsExecutionReport.create(true);
     }
 
