@@ -1,22 +1,45 @@
 package fr.epita.assistants.myide.ricains.entity.features.git;
 
+import java.io.File;
+
 import javax.validation.constraints.NotNull;
+
+import org.eclipse.jgit.api.AddCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.lib.RepositoryCache;
+import org.eclipse.jgit.util.FS;
 
 import fr.epita.assistants.myide.domain.entity.Feature;
 import fr.epita.assistants.myide.domain.entity.Project;
-import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Git;
+import fr.epita.assistants.myide.domain.entity.Mandatory.Features;
+import fr.epita.assistants.myide.ricains.entity.features.RicainsExecutionReport;
 
 public class AddFeature implements Feature {
 
     @Override
     public @NotNull ExecutionReport execute(Project project, Object... params) {
-        // TODO Auto-generated method stub
-        return null;
+
+        // Check if a git repo is existing in the project folder
+        File gitFile = project.getRootNode().getPath().toFile();
+        if (!RepositoryCache.FileKey.isGitRepository(gitFile, FS.DETECTED))
+            return RicainsExecutionReport.create(false);
+
+        Git git = null;
+        try {
+            git = Git.init().setDirectory(gitFile).call();
+        } catch (Exception e) {
+            return RicainsExecutionReport.create(false);
+        }
+
+        // Do the add command
+
+        return RicainsExecutionReport.create(false);
     }
 
     @Override
     public @NotNull Type type() {
-        return Git.ADD;
+        return Features.Git.ADD;
     }
 
 }
