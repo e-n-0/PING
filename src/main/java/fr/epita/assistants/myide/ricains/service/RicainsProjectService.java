@@ -30,7 +30,7 @@ public class RicainsProjectService implements ProjectService {
         if (root.toFile().isDirectory()) {
             type = Node.Types.FOLDER;
         }
-        Node rootNode = new RicainsNode(root.getFileName().toString(), type);
+        Node rootNode = new RicainsNode(root.getFileName().toString(), type, null);
         return new RicainsProject(rootNode);
     }
 
