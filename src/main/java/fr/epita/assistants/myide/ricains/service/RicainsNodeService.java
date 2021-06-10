@@ -59,13 +59,22 @@ public class RicainsNodeService implements NodeService {
         return node;
     }
 
+    static boolean deleteDir(File file) {
+        String[]entries = file.list();
+        if (file.isDirectory()) {
+            for (String s : entries) {
+                File currentFile = new File(file.getPath(), s);
+                deleteDir(currentFile);
+            }
+        }
+        return file.delete();
+    }
+
     @Override
     public boolean delete(Node node) {
         File file = node.getPath().toFile();
-        System.out.println("ok");
-        System.out.println(file.getName());
         if (file.exists()) {
-            return file.delete();
+            return deleteDir(file);
         }
         return false;
     }
