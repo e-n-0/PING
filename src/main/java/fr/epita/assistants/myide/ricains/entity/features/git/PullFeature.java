@@ -6,6 +6,8 @@ import javax.validation.constraints.NotNull;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.lib.RepositoryCache;
+import org.eclipse.jgit.util.FS;
 
 import fr.epita.assistants.myide.domain.entity.Feature;
 import fr.epita.assistants.myide.domain.entity.Project;
@@ -17,7 +19,11 @@ public class PullFeature implements Feature {
     @Override
     public @NotNull ExecutionReport execute(Project project, Object... params) {
 
+        // Check if a git repo is existing in the project folder
         File gitFile = project.getRootNode().getPath().toFile();
+        if (!RepositoryCache.FileKey.isGitRepository(gitFile, FS.DETECTED))
+            return RicainsExecutionReport.create(false);
+
         Git git = null;
         try {
             git = Git.init().setDirectory(gitFile).call();
@@ -25,6 +31,7 @@ public class PullFeature implements Feature {
             return RicainsExecutionReport.create(false);
         }
 
+        // Do the pull request
         var pullRequest = git.pull();
         PullResult pullResult = null;
         try {
