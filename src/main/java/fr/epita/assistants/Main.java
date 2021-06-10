@@ -26,6 +26,9 @@ public class Main {
         // Log.log(myroot.getPath().toString());
 
         Node todel = service.create(myroot, "jesuisundossier", Node.Types.FOLDER);
+        Log.log(todel.getPath().toString());
+        Node insiedToDel = service.create(todel, "ouinon", Node.Types.FILE);
+        Log.log(insiedToDel.getPath().toAbsolutePath().toString());
 
         /*
          * var list = myroot.getChildren(); for (Node n : list) { var list2 =
@@ -33,6 +36,8 @@ public class Main {
          * n.getType().toString() + " - " + list2.size()); for (Node n2 : list2)
          * Log.log(n2.getPath().toString()); }
          */
+
+        // service.move(todel, "./test2");
 
     }
 }

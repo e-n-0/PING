@@ -22,7 +22,7 @@ public class RicainsNode implements Node {
 
     @Override
     public @NotNull Path getPath() {
-        return this.path;
+        return this.path.toAbsolutePath();
     }
 
     @Override

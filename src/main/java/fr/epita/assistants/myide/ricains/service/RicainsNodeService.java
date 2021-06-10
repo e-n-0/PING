@@ -95,6 +95,9 @@ public class RicainsNodeService implements NodeService {
 
     @Override
     public Node move(Node nodeToMove, Node destinationFolder) {
+        if (nodeToMove == null || destinationFolder == null)
+            throw new RuntimeException("Parameters are null");
+
         if (destinationFolder.isFile()) {
             try {
                 throw new Exception("Destination is not a directory");
