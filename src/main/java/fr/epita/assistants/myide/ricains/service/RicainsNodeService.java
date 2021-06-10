@@ -1,6 +1,7 @@
 package fr.epita.assistants.myide.ricains.service;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -36,9 +37,19 @@ public class RicainsNodeService implements NodeService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String myString2 = myString.substring(0, from);
-        myString2 = myString2 + insertedContent;
-        myString2 = myString2 + myString.substring(to + 1);
+        String myString2;
+        String s = new String(insertedContent, StandardCharsets.UTF_8);
+        if (from < myString.length()) {
+            myString2 = myString.substring(0, from);
+            myString2 = myString2 + s;
+            if (myString.length() > to) {
+                myString2 = myString2 + myString.substring(to + 1);
+            }
+        }
+        else {
+            myString2 = myString + s;
+        }
+
         try {
             FileWriter fw = new FileWriter(file);
             fw.write(myString2);
