@@ -13,7 +13,7 @@ public class Main {
         ProjectService projectService = ide.init(new Configuration(Paths.get("."), Paths.get(".")));
         Project project = projectService.load(Paths.get("."));
 
-        var report = project.getFeature(Mandatory.Features.Git.COMMIT).get().execute(project, "oui");
+        var report = project.getFeature(Mandatory.Features.Git.PUSH).get().execute(project, "oui");
         System.out.println("report: " + report.isSuccess());
     }
 }

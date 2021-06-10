@@ -31,7 +31,7 @@ public class PushFeature implements Feature {
         }
 
         // Do the push command
-        PushCommand pushCommand = git.push();
+        PushCommand pushCommand = git.push().setPushAll();
         Iterable<PushResult> pushResult = null;
         try {
             pushResult = pushCommand.call();
