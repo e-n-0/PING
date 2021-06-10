@@ -14,6 +14,7 @@ import fr.epita.assistants.myide.domain.entity.Feature;
 import fr.epita.assistants.myide.domain.entity.Project;
 import fr.epita.assistants.myide.domain.entity.Mandatory.Features;
 import fr.epita.assistants.myide.ricains.entity.features.RicainsExecutionReport;
+import fr.epita.assistants.utils.Log;
 
 public class PushFeature implements Feature {
 
@@ -21,13 +22,11 @@ public class PushFeature implements Feature {
     public @NotNull ExecutionReport execute(Project project, Object... params) {
         // Check if a git repo is existing in the project folder
         File gitFile = project.getRootNode().getPath().toFile();
-        if (!RepositoryCache.FileKey.isGitRepository(gitFile, FS.DETECTED))
-            return RicainsExecutionReport.create(false);
-
         Git git = null;
         try {
             git = Git.init().setDirectory(gitFile).call();
         } catch (Exception e) {
+            Log.err(e);
             return RicainsExecutionReport.create(false);
         }
 
@@ -37,6 +36,7 @@ public class PushFeature implements Feature {
         try {
             pushResult = pushCommand.call();
         } catch (Exception e) {
+            Log.err(e);
             return RicainsExecutionReport.create(false);
         }
 
