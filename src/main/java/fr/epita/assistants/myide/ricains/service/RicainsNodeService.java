@@ -72,15 +72,17 @@ public class RicainsNodeService implements NodeService {
 
     @Override
     public Node create(Node folder, String name, Type type) {
-        String path = folder.getPath().toString() + "\\" + name;
+        Node mynode;
+        String path = Path.of(folder.getPath().toString(), name).toString();
         File myFile = new File(path);
         try {
             myFile.createNewFile();
-
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
-        return new RicainsNode(path, type);
+        mynode = new RicainsNode(path, type, null);
+        nodes.add(mynode);
+        return mynode;
     }
 
     @Override
