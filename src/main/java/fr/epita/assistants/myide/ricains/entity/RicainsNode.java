@@ -34,7 +34,8 @@ public class RicainsNode implements Node {
 
     @Override
     public @NotNull List<@NotNull Node> getChildren() {
-        List<Node> children = new ArrayList<>();
+        return null;
+        /*List<Node> children = new ArrayList<>();
         if (type != Types.FILE) {
             File folder = path.toFile();
             File[] listFile = folder.listFiles();
@@ -50,8 +51,7 @@ public class RicainsNode implements Node {
                 children.add(node);
             }
         }
-        this.children = children;
-        return children;
+        return children;*/
     }
 
 }

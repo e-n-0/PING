@@ -77,19 +77,8 @@ public class RicainsNodeService implements NodeService {
         File myFile = new File(path);
         try {
             myFile.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (folder != null) {
-            if (folder.isFile()) {
-                try {
-                    throw new Exception("folder is not a directory");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            mynode = new RicainsNode(path, type, null);
-            folder.getChildren().add(mynode);
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
         }
         mynode = new RicainsNode(path, type, null);
         nodes.add(mynode);
@@ -111,7 +100,7 @@ public class RicainsNodeService implements NodeService {
             e.printStackTrace();
         }
 
-        RicainsNode nodeMoved = new RicainsNode(destinationFolder.getPath().toString() + "\\" + nodeToMove.getPath().toFile().getName(), nodeToMove.getType(), nodeToMove.getChildren());
+        RicainsNode nodeMoved = new RicainsNode(destinationFolder.getPath().toString() + "\\" + nodeToMove.getPath().toFile().getName(), nodeToMove.getType());
         delete(nodeToMove);
         return nodeMoved;
     }
