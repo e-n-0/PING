@@ -1,22 +1,18 @@
-package fr.epita.assistants.myide.ricains.entity.features;
+package fr.epita.assistants.myide.ricains.entity.features.git;
 
 import java.io.File;
 
 import javax.validation.constraints.NotNull;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullResult;
 
 import fr.epita.assistants.myide.domain.entity.Feature;
 import fr.epita.assistants.myide.domain.entity.Project;
+import fr.epita.assistants.myide.domain.entity.Mandatory.Features;
+import fr.epita.assistants.myide.ricains.entity.features.RicainsExecutionReport;
 
-public class FeatureGit implements Feature {
-
-    public @NotNull ExecutionReport pull(Git git, Object... params) throws Exception {
-
-        var pullRequest = git.pull();
-        var pullResult = pullRequest.call();
-        return RicainsExecutionReport.create(pullResult.isSuccessful());
-    }
+public class PullFeature implements Feature {
 
     @Override
     public @NotNull ExecutionReport execute(Project project, Object... params) {
@@ -29,13 +25,20 @@ public class FeatureGit implements Feature {
             return RicainsExecutionReport.create(false);
         }
 
-        return RicainsExecutionReport.create(true);
+        var pullRequest = git.pull();
+        PullResult pullResult = null;
+        try {
+            pullResult = pullRequest.call();
+        } catch (Exception e) {
+            return RicainsExecutionReport.create(false);
+        }
+
+        return RicainsExecutionReport.create(pullResult.isSuccessful());
     }
 
     @Override
     public @NotNull Type type() {
-        // TODO Auto-generated method stub
-        return null;
+        return Features.Git.PULL;
     }
 
 }
