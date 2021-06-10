@@ -8,15 +8,11 @@ import fr.epita.assistants.MyIde.Configuration;
 import fr.epita.assistants.myide.domain.entity.Feature;
 import fr.epita.assistants.myide.domain.entity.Node;
 import fr.epita.assistants.myide.domain.entity.Project;
-import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Any;
-import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Git;
 import fr.epita.assistants.myide.domain.service.NodeService;
 import fr.epita.assistants.myide.domain.service.ProjectService;
 import fr.epita.assistants.myide.ricains.entity.RicainsNode;
 import fr.epita.assistants.myide.ricains.entity.RicainsProject;
-import fr.epita.assistants.myide.ricains.entity.features.FeatureGit;
-import fr.epita.assistants.myide.ricains.entity.features.FeatureMaven;
-import fr.epita.assistants.myide.ricains.entity.features.FeatureProject;
+import fr.epita.assistants.myide.ricains.entity.features.RicainsExecutionReport;
 
 public class RicainsProjectService implements ProjectService {
 
@@ -42,18 +38,11 @@ public class RicainsProjectService implements ProjectService {
     public @NotNull Feature.ExecutionReport execute(@NotNull Project project, @NotNull Feature.Type featureType,
             Object... params) {
 
-        // Any - Project feature
-        if (featureType.equals(Any.CLEANUP) || featureType.equals(Any.DIST) || featureType.equals(Any.SEARCH))
-            return new FeatureProject().execute(project, params);
+        var optionalFeature = project.getFeature(featureType);
+        if (optionalFeature.isPresent())
+            return optionalFeature.get().execute(project, params);
 
-        // Git Feature
-        else if (featureType.equals(Git.PULL) || featureType.equals(Git.ADD) || featureType.equals(Git.COMMIT)
-                || featureType.equals(Git.PUSH))
-            return new FeatureGit().execute(project, params);
-
-        // Maven Feature
-        else
-            return new FeatureMaven().execute(project, params);
+        return RicainsExecutionReport.create(false);
     }
 
     @Override
