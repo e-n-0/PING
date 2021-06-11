@@ -1,5 +1,6 @@
 package fr.epita.assistants.myide.ricains.entity.aspects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.epita.assistants.myide.domain.entity.Aspect;
@@ -19,7 +20,7 @@ public class GitAspect implements Aspect {
 
     @Override
     public List<Feature> getFeatureList() {
-        var list = Aspect.super.getFeatureList();
+        List<Feature> list = new ArrayList<>();
         list.add(new AddFeature());
         list.add(new CommitFeature());
         list.add(new PullFeature());

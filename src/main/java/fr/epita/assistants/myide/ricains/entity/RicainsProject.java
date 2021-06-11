@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 import fr.epita.assistants.myide.domain.entity.*;
+import fr.epita.assistants.myide.domain.entity.Feature.Type;
 import fr.epita.assistants.myide.domain.entity.Node.Types;
 import fr.epita.assistants.myide.ricains.entity.aspects.AnyAspect;
 import fr.epita.assistants.myide.ricains.entity.aspects.GitAspect;
@@ -36,9 +37,8 @@ public class RicainsProject implements Project {
         if (this.rootNode.getType().equals(Types.FILE))
             return aspects;
 
-        Path parentPath = this.rootNode.getPath().toAbsolutePath().getParent();
-
         // Detect pom.xml file (MAVEN project)
+        Path parentPath = this.rootNode.getPath().toAbsolutePath().getParent();
         Path pomPath = Path.of(parentPath.toString(), "pom.xml");
         if (pomPath.toFile().exists())
             aspects.add(new MavenAspect());
@@ -61,7 +61,8 @@ public class RicainsProject implements Project {
         var aspects = getAspects();
         for (Aspect aspect : aspects) {
             for (Feature feature : aspect.getFeatureList()) {
-                if (feature.type().equals(featureType))
+                Type type = feature.type();
+                if (type.equals(featureType))
                     return Optional.of(feature);
             }
         }

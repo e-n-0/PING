@@ -1,5 +1,6 @@
 package fr.epita.assistants.myide.ricains.entity.aspects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.epita.assistants.myide.domain.entity.Aspect;
@@ -22,7 +23,7 @@ public class MavenAspect implements Aspect {
 
     @Override
     public List<Feature> getFeatureList() {
-        var list = Aspect.super.getFeatureList();
+        List<Feature> list = new ArrayList<>();
         list.add(new CleanFeature());
         list.add(new CompileFeature());
         list.add(new ExecFeature());
