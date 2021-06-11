@@ -17,7 +17,7 @@ public class InstallFeature implements Feature {
         String path = project.getRootNode().getPath().toString();
         String cmdParams = "mvn install" + path;
         for (Object prout : params)
-            cmdParams += prout;
+            cmdParams += " " + prout;
         Process p;
         try {
             p = Runtime.getRuntime().exec(cmdParams);
