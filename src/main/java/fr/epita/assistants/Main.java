@@ -17,7 +17,7 @@ public class Main {
         Log.log(path.toAbsolutePath());
         Project project = projectService.load(path);
 
-        var report = project.getFeature(Mandatory.Features.Maven.INSTALL).get().execute(project, "");
+        var report = project.getFeature(Mandatory.Features.Any.CLEANUP).get().execute(project);
         System.out.println("report: " + report.isSuccess());
     }
 }

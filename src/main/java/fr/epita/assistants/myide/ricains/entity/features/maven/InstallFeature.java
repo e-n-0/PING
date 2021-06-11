@@ -3,6 +3,7 @@ package fr.epita.assistants.myide.ricains.entity.features.maven;
 import javax.validation.constraints.NotNull;
 
 import fr.epita.assistants.myide.domain.entity.Feature;
+import fr.epita.assistants.myide.domain.entity.Mandatory;
 import fr.epita.assistants.myide.domain.entity.Project;
 import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Maven;
 import fr.epita.assistants.myide.ricains.entity.features.RicainsExecutionReport;

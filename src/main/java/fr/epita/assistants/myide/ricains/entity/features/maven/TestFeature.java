@@ -35,7 +35,7 @@ public class TestFeature implements Feature {
         }
 
     }
-    }
+
 
     @Override
     public @NotNull Type type() {
