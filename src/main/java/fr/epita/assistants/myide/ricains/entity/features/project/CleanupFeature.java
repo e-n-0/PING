@@ -32,9 +32,11 @@ public class CleanupFeature implements Feature {
         if (node.isFile() && filenameToDelete.contains(fileName)) {
             throw new RuntimeException("fileName: " + fileName);
 
-            if (!nodeService.delete(node)) {
-                throw new RuntimeException("Fail to delete the node at path: " + node.getPath().toString());
-            }
+            /*
+             * if (!nodeService.delete(node)) { throw new
+             * RuntimeException("Fail to delete the node at path: " +
+             * node.getPath().toString()); }
+             */
         } else if (node.isFolder()) {
             var nodes = node.getChildren();
             for (Node n : nodes)
