@@ -104,6 +104,9 @@ public class RicainsNodeService implements NodeService {
 
     @Override
     public Node move(Node nodeToMove, Node destinationFolder) {
+        throw new RuntimeException(nodeToMove.getPath().toString() + " and " + destinationFolder.getPath().toString());
+
+ /*
         if (nodeToMove == null || destinationFolder == null)
             throw new RuntimeException("Parameters are null");
 
@@ -126,7 +129,7 @@ public class RicainsNodeService implements NodeService {
 
         RicainsNode nodeMoved = new RicainsNode(newPath.toString(), nodeToMove.getType());
         delete(nodeToMove);
-        return nodeMoved;
+        return nodeMoved;*/
     }
 
 }
