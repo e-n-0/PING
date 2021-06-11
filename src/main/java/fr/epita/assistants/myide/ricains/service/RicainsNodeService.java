@@ -38,13 +38,13 @@ public class RicainsNodeService implements NodeService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String myString2;
+        String myString2 = "";
         String s = new String(insertedContent, StandardCharsets.UTF_8);
         if (from < myString.length()) {
             myString2 = myString.substring(0, from);
             myString2 = myString2 + s;
             if (myString.length() > to) {
-                myString2 = myString2 + myString.substring(to + 1);
+                myString2 = myString2 + myString.substring(to);
             }
         } else {
             myString2 = myString + s;
