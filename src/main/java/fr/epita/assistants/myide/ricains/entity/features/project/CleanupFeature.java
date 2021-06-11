@@ -28,7 +28,10 @@ public class CleanupFeature implements Feature {
             NodeService nodeService) {
         final String fileName = node.getPath().getFileName().toString();
         Log.log("filname Node:", fileName, "-", node.getType().toString());
+
         if (node.isFile() && filenameToDelete.contains(fileName)) {
+            throw new RuntimeException("fileName: " + fileName);
+
             if (!nodeService.delete(node)) {
                 throw new RuntimeException("Fail to delete the node at path: " + node.getPath().toString());
             }

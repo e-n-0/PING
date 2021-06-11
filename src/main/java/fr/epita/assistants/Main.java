@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) {
         MyIde ide = new MyIde();
         ProjectService projectService = ide.init(new Configuration(Paths.get("."), Paths.get(".")));
-        Path path = Paths.get("testfolder/");
+        Path path = Paths.get("/Users/nolimit/Documents/EPITA/ING1/projects/PING/PING/testfolder");
         Log.log(path.toAbsolutePath());
         Project project = projectService.load(path);
 
