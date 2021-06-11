@@ -14,6 +14,7 @@ import fr.epita.assistants.myide.domain.entity.Node.Type;
 import fr.epita.assistants.myide.domain.entity.Node.Types;
 import fr.epita.assistants.myide.domain.service.NodeService;
 import fr.epita.assistants.myide.ricains.entity.RicainsNode;
+import fr.epita.assistants.utils.Log;
 
 public class RicainsNodeService implements NodeService {
     private final List<Node> nodes = new ArrayList<>();
@@ -104,9 +105,7 @@ public class RicainsNodeService implements NodeService {
 
     @Override
     public Node move(Node nodeToMove, Node destinationFolder) {
-        throw new RuntimeException(nodeToMove.getPath().toString() + " and " + destinationFolder.getPath().toString());
 
- /*
         if (nodeToMove == null || destinationFolder == null)
             throw new RuntimeException("Parameters are null");
 
@@ -118,7 +117,8 @@ public class RicainsNodeService implements NodeService {
             }
         }
 
-        var newPath = Path.of(destinationFolder.getPath().toString(), nodeToMove.getPath().toString());
+        var newPath = Path.of(destinationFolder.getPath().toString(), nodeToMove.getPath().getFileName().toString());
+        Log.log(newPath);
 
         try {
             Files.move(nodeToMove.getPath(), newPath, StandardCopyOption.REPLACE_EXISTING);
@@ -129,7 +129,7 @@ public class RicainsNodeService implements NodeService {
 
         RicainsNode nodeMoved = new RicainsNode(newPath.toString(), nodeToMove.getType());
         delete(nodeToMove);
-        return nodeMoved;*/
+        return nodeMoved;
     }
 
 }
