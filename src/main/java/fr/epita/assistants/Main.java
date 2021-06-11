@@ -13,11 +13,11 @@ public class Main {
     public static void main(String[] args) {
         MyIde ide = new MyIde();
         ProjectService projectService = ide.init(new Configuration(Paths.get("."), Paths.get(".")));
-        Path path = Paths.get("/Users/nolimit/Documents/EPITA/ING1/projects/PING/PING/testfolder");
+        Path path = Paths.get(".");
         Log.log(path.toAbsolutePath());
         Project project = projectService.load(path);
 
-        var report = project.getFeature(Mandatory.Features.Any.CLEANUP).get().execute(project);
+        var report = project.getFeature(Mandatory.Features.Any.DIST).get().execute(project);
         System.out.println("report: " + report.isSuccess());
     }
 }

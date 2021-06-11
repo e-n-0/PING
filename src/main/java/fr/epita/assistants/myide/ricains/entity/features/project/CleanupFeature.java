@@ -2,8 +2,6 @@ package fr.epita.assistants.myide.ricains.entity.features.project;
 
 import javax.validation.constraints.NotNull;
 
-import org.assertj.core.util.Files;
-
 import fr.epita.assistants.myide.domain.entity.Feature;
 import fr.epita.assistants.myide.domain.entity.Node;
 import fr.epita.assistants.myide.domain.entity.Project;
