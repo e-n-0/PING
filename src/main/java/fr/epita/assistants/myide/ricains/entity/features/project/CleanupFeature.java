@@ -45,7 +45,7 @@ public class CleanupFeature implements Feature {
 
         Path rootPath = null;
         if (project.getRootNode().isFolder())
-            rootPath = project.getRootNode().getPath().toAbsolutePath();
+            rootPath = project.getRootNode().getPath();
         else
             rootPath = project.getRootNode().getPath().toAbsolutePath().getParent();
 
