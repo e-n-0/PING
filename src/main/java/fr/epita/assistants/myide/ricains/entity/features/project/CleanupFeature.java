@@ -67,6 +67,7 @@ public class CleanupFeature implements Feature {
         }
 
         // Search in all files of the project (root node) and delete files
+
         if (project.getRootNode().isFolder())
             removeRecusiveFiles(project.getRootNode(), filenameToDelete);
         else {
