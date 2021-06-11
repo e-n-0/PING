@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import fr.epita.assistants.myide.domain.entity.Node;
@@ -33,7 +34,7 @@ public class RicainsNodeService implements NodeService {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                myString = myString + (line + "\n");
+                myString = myString + line;
             }
         } catch (IOException e) {
             e.printStackTrace();
