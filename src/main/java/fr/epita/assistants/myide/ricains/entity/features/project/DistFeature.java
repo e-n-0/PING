@@ -3,6 +3,7 @@ package fr.epita.assistants.myide.ricains.entity.features.project;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -13,14 +14,13 @@ import fr.epita.assistants.myide.domain.entity.Node;
 import fr.epita.assistants.myide.domain.entity.Project;
 import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Any;
 import fr.epita.assistants.myide.domain.entity.Node.Types;
-import fr.epita.assistants.myide.domain.service.NodeService;
 import fr.epita.assistants.myide.ricains.entity.features.RicainsExecutionReport;
-import fr.epita.assistants.myide.ricains.service.RicainsNodeService;
 import fr.epita.assistants.utils.Log;
 
 public class DistFeature implements Feature {
 
-    public static void addToZip(File directoryToZip, File file, ZipOutputStream zos) throws Exception {
+    public static void addToZip(final String projectName, File directoryToZip, File file, ZipOutputStream zos)
+            throws Exception {
 
         FileInputStream fis = new FileInputStream(file);
 
@@ -28,8 +28,8 @@ public class DistFeature implements Feature {
         // to the directory being zipped, so chop off the rest of the path
         String zipFilePath = file.getCanonicalPath().substring(directoryToZip.getCanonicalPath().length() + 1,
                 file.getCanonicalPath().length());
-        System.out.println("Writing '" + zipFilePath + "' to zip file");
-        ZipEntry zipEntry = new ZipEntry(zipFilePath);
+
+        ZipEntry zipEntry = new ZipEntry(projectName + "/" + zipFilePath);
         zos.putNextEntry(zipEntry);
 
         byte[] bytes = new byte[1024];
@@ -42,11 +42,13 @@ public class DistFeature implements Feature {
         fis.close();
     }
 
-    private static void addRecursiveFiles(Node rootNode, Node node, ZipOutputStream zos) throws Exception {
+    private static void addRecursiveFiles(Node rootNode, Node node, ZipOutputStream zos, final String projectName)
+            throws Exception {
         for (Node n : node.getChildren()) {
             if (n.getType().equals(Types.FILE))
-                addToZip(rootNode.getPath().toFile(), n.getPath().toFile(), zos);
-            addRecursiveFiles(rootNode, n, zos);
+                addToZip(projectName, rootNode.getPath().toFile(), n.getPath().toFile(), zos);
+
+            addRecursiveFiles(rootNode, n, zos, projectName);
         }
     }
 
@@ -59,10 +61,17 @@ public class DistFeature implements Feature {
             return resultCleanup;
 
         try {
-            final String projectName = project.getRootNode().getPath().toAbsolutePath().getFileName().toString();
-            FileOutputStream fos = new FileOutputStream(projectName + ".zip");
+            final String projectName = project.getRootNode().getPath().toFile().getCanonicalFile().toPath()
+                    .getFileName().toString();
+            final String upperPath = project.getRootNode().getPath().toFile().getCanonicalFile().toPath().getParent()
+                    .toString();
+            final String finalPathResult = Path.of(upperPath, projectName).toString();
+            Log.log(projectName);
+            Log.log(upperPath);
+            Log.log(finalPathResult);
+            FileOutputStream fos = new FileOutputStream(finalPathResult + ".zip");
             ZipOutputStream zos = new ZipOutputStream(fos);
-            addRecursiveFiles(project.getRootNode(), project.getRootNode(), zos);
+            addRecursiveFiles(project.getRootNode(), project.getRootNode(), zos, projectName);
 
             zos.close();
             fos.close();
