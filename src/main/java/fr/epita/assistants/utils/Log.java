@@ -30,7 +30,7 @@ public class Log {
     private static String constructString(Object... params) {
         var stringBuilder = new StringBuilder();
         for (Object obj : params) {
-            var str = obj.toString();
+            var str = obj == null ? "null" : obj.toString();
             stringBuilder.append(str);
             stringBuilder.append(" ");
         }

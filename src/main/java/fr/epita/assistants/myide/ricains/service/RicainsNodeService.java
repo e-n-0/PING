@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import fr.epita.assistants.myide.domain.entity.Node;
@@ -14,6 +15,7 @@ import fr.epita.assistants.myide.domain.entity.Node.Type;
 import fr.epita.assistants.myide.domain.entity.Node.Types;
 import fr.epita.assistants.myide.domain.service.NodeService;
 import fr.epita.assistants.myide.ricains.entity.RicainsNode;
+import fr.epita.assistants.utils.Log;
 
 public class RicainsNodeService implements NodeService {
     private final List<Node> nodes = new ArrayList<>();
@@ -32,18 +34,18 @@ public class RicainsNodeService implements NodeService {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
-                myString = myString + (line + "\n");
+                myString = myString + line;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String myString2;
+        String myString2 = "";
         String s = new String(insertedContent, StandardCharsets.UTF_8);
         if (from < myString.length()) {
             myString2 = myString.substring(0, from);
             myString2 = myString2 + s;
             if (myString.length() > to) {
-                myString2 = myString2 + myString.substring(to + 1);
+                myString2 = myString2 + myString.substring(to);
             }
         } else {
             myString2 = myString + s;
@@ -59,13 +61,22 @@ public class RicainsNodeService implements NodeService {
         return node;
     }
 
+    static boolean deleteDir(File file) {
+        String[]entries = file.list();
+        if (file.isDirectory()) {
+            for (String s : entries) {
+                File currentFile = new File(file.getPath(), s);
+                deleteDir(currentFile);
+            }
+        }
+        return file.delete();
+    }
+
     @Override
     public boolean delete(Node node) {
         File file = node.getPath().toFile();
-        System.out.println("ok");
-        System.out.println(file.getName());
         if (file.exists()) {
-            return file.delete();
+            return deleteDir(file);
         }
         return false;
     }
@@ -95,6 +106,7 @@ public class RicainsNodeService implements NodeService {
 
     @Override
     public Node move(Node nodeToMove, Node destinationFolder) {
+
         if (nodeToMove == null || destinationFolder == null)
             throw new RuntimeException("Parameters are null");
 
@@ -106,7 +118,8 @@ public class RicainsNodeService implements NodeService {
             }
         }
 
-        var newPath = Path.of(destinationFolder.toString(), nodeToMove.getPath().toString());
+        var newPath = Path.of(destinationFolder.getPath().toString(), nodeToMove.getPath().getFileName().toString());
+        Log.log(newPath);
 
         try {
             Files.move(nodeToMove.getPath(), newPath, StandardCopyOption.REPLACE_EXISTING);
