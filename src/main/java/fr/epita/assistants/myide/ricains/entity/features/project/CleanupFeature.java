@@ -8,7 +8,11 @@ import fr.epita.assistants.myide.domain.entity.Feature;
 import fr.epita.assistants.myide.domain.entity.Node;
 import fr.epita.assistants.myide.domain.entity.Project;
 import fr.epita.assistants.myide.domain.entity.Mandatory.Features.Any;
+import fr.epita.assistants.myide.domain.entity.Node.Types;
+import fr.epita.assistants.myide.domain.service.NodeService;
+import fr.epita.assistants.myide.ricains.entity.RicainsNode;
 import fr.epita.assistants.myide.ricains.entity.features.RicainsExecutionReport;
+import fr.epita.assistants.myide.ricains.service.RicainsNodeService;
 import fr.epita.assistants.utils.Log;
 
 import java.io.BufferedReader;
@@ -29,6 +33,7 @@ public class CleanupFeature implements Feature {
 
     private static void removeRecusiveFiles(final Node node, final List<String> filenameToDelete) {
         final String fileName = node.getPath().getFileName().toString();
+        Log.log("filname Node:", fileName);
         if (filenameToDelete.contains(fileName))
             deleteNode(node);
         else
@@ -39,7 +44,14 @@ public class CleanupFeature implements Feature {
     @Override
     public @NotNull ExecutionReport execute(Project project, Object... params) {
         List<String> filenameToDelete = new ArrayList<>();
-        Path ignoreFilePath = Path.of(project.getRootNode().getPath().toString(), ".myideignore");
+
+        Path rootPath = null;
+        if (project.getRootNode().isFolder())
+            rootPath = project.getRootNode().getPath().toAbsolutePath();
+        else
+            rootPath = project.getRootNode().getPath().toAbsolutePath().getParent();
+
+        Path ignoreFilePath = Path.of(rootPath.toString(), ".myideignore");
 
         // Get all filename of the .myideignore to delete
         try (var br = new BufferedReader(new FileReader(ignoreFilePath.toFile()))) {
@@ -55,7 +67,13 @@ public class CleanupFeature implements Feature {
         }
 
         // Search in all files of the project (root node) and delete files
-        removeRecusiveFiles(project.getRootNode(), filenameToDelete);
+        if (project.getRootNode().isFolder())
+            removeRecusiveFiles(project.getRootNode(), filenameToDelete);
+        else {
+            Node node = new RicainsNode(rootPath.toString(), Types.FOLDER);
+            removeRecusiveFiles(node, filenameToDelete);
+        }
+
         return RicainsExecutionReport.create(true);
     }
 
