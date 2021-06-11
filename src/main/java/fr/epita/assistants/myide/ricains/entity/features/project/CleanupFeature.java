@@ -34,9 +34,9 @@ public class CleanupFeature implements Feature {
     private static void removeRecusiveFiles(final Node node, final List<String> filenameToDelete) {
         final String fileName = node.getPath().getFileName().toString();
         Log.log("filname Node:", fileName);
-        if (filenameToDelete.contains(fileName))
+        if (node.isFile() && filenameToDelete.contains(fileName))
             deleteNode(node);
-        else
+        else if (node.isFolder())
             for (Node n : node.getChildren())
                 removeRecusiveFiles(n, filenameToDelete);
     }
@@ -63,8 +63,7 @@ public class CleanupFeature implements Feature {
             }
         } catch (IOException e) {
             Log.err(e);
-            throw new RuntimeException(e);
-            // return RicainsExecutionReport.create(false);
+            return RicainsExecutionReport.create(false);
         }
 
         // Search in all files of the project (root node) and delete files
@@ -75,8 +74,7 @@ public class CleanupFeature implements Feature {
             removeRecusiveFiles(node, filenameToDelete);
         }
 
-        throw new RuntimeException("er:: " + String.join(", ", filenameToDelete));
-        // return RicainsExecutionReport.create(true);
+        return RicainsExecutionReport.create(true);
     }
 
     @Override
