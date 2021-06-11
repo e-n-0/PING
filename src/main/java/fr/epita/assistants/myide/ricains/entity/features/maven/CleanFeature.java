@@ -13,8 +13,7 @@ public class CleanFeature implements Feature {
 
     @Override
     public @NotNull ExecutionReport execute(Project project, Object... params) {
-        String path = project.getRootNode().getPath().toString();
-        String cmdParams = "mvn clean " + path;
+        String cmdParams = "mvn clean ";
         for (Object prout : params)
             cmdParams += prout;
         Process p;
