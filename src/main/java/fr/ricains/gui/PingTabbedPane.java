@@ -1,9 +1,19 @@
 package fr.ricains.gui;
 
+import javax.swing.*;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.*;
 
 public class PingTabbedPane extends BasicTabbedPaneUI {
+
+    @Override
+    protected JButton createScrollButton(int direction) {
+        JButton defaultButton = super.createScrollButton(direction);
+        System.out.println(defaultButton.getDisabledIcon());
+        defaultButton.setBorder(BorderFactory.createEmptyBorder());
+        defaultButton.addActionListener(e -> this.navigateSelectedTab(direction));
+        return defaultButton;
+    }
 
     @Override
     protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
