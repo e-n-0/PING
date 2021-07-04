@@ -8,10 +8,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.EventObject;
 import java.util.Locale;
@@ -48,7 +45,34 @@ public class mainForm {
         JFrame frame = new JFrame("PING");
         var form = new mainForm();
         frame.setContentPane(form.panel1);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+
+                // Check if there is some unsaved opened files
+                var tabCount = form.filesTabs.getTabCount();
+                var someEditedFiles = false;
+                for (int i = 1; i < tabCount; i++) {
+                    PingTabFileComponent tab = (PingTabFileComponent) form.filesTabs.getTabComponentAt(i);
+                    if (tab.getEdited()) {
+                        someEditedFiles = true;
+                        break;
+                    }
+                }
+
+                if (someEditedFiles) {
+                    String ObjButtons[] = {"Yes", "No"};
+                    int PromptResult = JOptionPane.showOptionDialog(null, "You have some unsaved files in the project.\nAre you sure you want to exit?", "Online Examination System", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, ObjButtons, ObjButtons[1]);
+                    if (PromptResult == JOptionPane.YES_OPTION) {
+                        System.exit(0);
+                    }
+                } else
+                    System.exit(0);
+            }
+        });
+
+
         frame.pack();
 
 
