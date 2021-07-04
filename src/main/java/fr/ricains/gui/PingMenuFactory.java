@@ -29,8 +29,9 @@ public abstract class PingMenuFactory {
 
             String selectedFile = "";
             try {
-                selectedFile = fd.getDirectory() + fd.getFile();
-                mainForm.constructMainForm(selectedFile);
+                selectedFile = fd.getFile() != null ? fd.getDirectory() + fd.getFile() : "";
+                if(!selectedFile.equals(""))
+                    mainForm.constructMainForm(selectedFile);
 
             } catch (Exception e2) {}
 

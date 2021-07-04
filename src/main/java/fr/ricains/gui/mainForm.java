@@ -94,8 +94,7 @@ public class mainForm {
         };
     }
 
-    public static String chooseProjectFolder()
-    {
+    public static String chooseProjectFolder() {
         System.setProperty("apple.awt.fileDialogForDirectories", "true");
 
         JFrame frame = new JFrame();
@@ -107,13 +106,8 @@ public class mainForm {
 
         String selectedFile = "";
         try {
-            selectedFile = fd.getDirectory() + fd.getFile();
+            selectedFile = fd.getFile() != null ? fd.getDirectory() + fd.getFile() : "";
         } catch (Exception e2) {
-            JOptionPane.showMessageDialog(frame,
-                    "You did not select a valid folder.\nThe application will close.",
-                    "Error",
-                    JOptionPane.WARNING_MESSAGE);
-
         }
         System.setProperty("apple.awt.fileDialogForDirectories", "false");
 
