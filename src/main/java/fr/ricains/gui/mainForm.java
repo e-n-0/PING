@@ -45,7 +45,7 @@ public class mainForm {
         return filesTabs;
     }
 
-    private static void setSystemUIConfiguration() {
+    public static void setSystemUIConfiguration() {
         // Set Menu outside of the app for macOS
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
@@ -94,9 +94,33 @@ public class mainForm {
         };
     }
 
-    public static void constructMainForm(String projectPath) {
+    public static String chooseProjectFolder()
+    {
+        System.setProperty("apple.awt.fileDialogForDirectories", "true");
 
-        setSystemUIConfiguration();
+        JFrame frame = new JFrame();
+
+        FileDialog fd = new FileDialog(frame);
+        fd.setDirectory(System.getProperty("user.home"));
+        fd.setLocation(50, 50);
+        fd.setVisible(true);
+
+        String selectedFile = "";
+        try {
+            selectedFile = fd.getDirectory() + fd.getFile();
+        } catch (Exception e2) {
+            JOptionPane.showMessageDialog(frame,
+                    "You did not select a valid folder.\nThe application will close.",
+                    "Error",
+                    JOptionPane.WARNING_MESSAGE);
+
+        }
+        System.setProperty("apple.awt.fileDialogForDirectories", "false");
+
+        return selectedFile;
+    }
+
+    public static void constructMainForm(String projectPath) {
 
         // Config Main Form
         JFrame frame = new JFrame("Les Ricains Editor");
@@ -133,6 +157,7 @@ public class mainForm {
 
         // Load project from project Path
         final File file = new File(projectPath);
+        System.out.println(file);
         final MyFile mf = new MyFile(file);
         form.projectFiles.setCellRenderer(new TreeCellRenderer());
         form.projectFiles.setModel(new FileTreeModel(mf));

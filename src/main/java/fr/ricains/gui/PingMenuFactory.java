@@ -21,7 +21,7 @@ public abstract class PingMenuFactory {
         {
             System.setProperty("apple.awt.fileDialogForDirectories", "true");
             FileDialog fd = new FileDialog(frame);
-            fd.setDirectory("/");
+            fd.setDirectory(System.getProperty("user.home"));
             fd.setLocation(50, 50);
             fd.setVisible(true);
 
