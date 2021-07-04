@@ -35,26 +35,39 @@ public class mainForm {
     private JPanel testpanelUntitled;
 
     public mainForm() {
-
     }
 
-    public static void constructMainForm(String projectPath) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public JTree getProjectFiles() {
+        return projectFiles;
+    }
 
+    public JTabbedPane getFilesTabs() {
+        return filesTabs;
+    }
+
+    private static void setSystemUIConfiguration() {
+        // Set Menu outside of the app for macOS
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
+        // Use darkmode for macOS (black window bar)
         System.setProperty("apple.awt.application.appearance", "NSAppearanceNameDarkAqua");
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Remove border for TabbedPane inside the whole app
         UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(0, 0, 0, 0));
         UIManager.getDefaults().put("TabbedPane.tabAreaInsets", new Insets(0, 0, 0, 0));
         UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
 
+    }
 
-        JFrame frame = new JFrame("PING");
-        var form = new mainForm();
-        frame.setContentPane(form.panel1);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(new WindowAdapter() {
+    private static WindowAdapter configWindowCloseEvent(mainForm form) {
+        return new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
 
@@ -78,110 +91,55 @@ public class mainForm {
                 } else
                     System.exit(0);
             }
-        });
+        };
+    }
 
+    public static void constructMainForm(String projectPath) {
 
+        setSystemUIConfiguration();
+
+        // Config Main Form
+        JFrame frame = new JFrame("Les Ricains Editor");
+        var form = new mainForm();
+        frame.setContentPane(form.panel1);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(configWindowCloseEvent(form));
         frame.pack();
 
+        // Set the Window in the center of the screen
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 
+        // Remove useless borders
         form.splitNameSplitButton.setBorder(BorderFactory.createEmptyBorder());
         form.splitFilesTree.setBorder(BorderFactory.createEmptyBorder());
         form.splitMainView.setBorder(BorderFactory.createEmptyBorder());
         form.splitMainView.setContinuousLayout(true);
 
-        form.scrollFilesProject.setBorder(BorderFactory.createEmptyBorder());
-
+        // Config Scroll for JTree (Project files)
         JPanel blackCorner = new JPanel();
         blackCorner.setBackground(new Color(36, 36, 36));
         form.scrollFilesProject.setCorner(JScrollPane.LOWER_RIGHT_CORNER, blackCorner);
-
         form.scrollFilesProject.getVerticalScrollBar().setUI(new PingProjectFilesScrollBar());
         form.scrollFilesProject.getHorizontalScrollBar().setUI(new PingProjectFilesScrollBar());
+        form.scrollFilesProject.setBorder(BorderFactory.createEmptyBorder());
 
-        form.projectFiles.setCellRenderer(new TreeCellRenderer());
-
+        // Config file tabs + Add a text in the center of the app if no files is opened
         form.filesTabs.setUI(new PingTabbedPane());
-
         JLabel test = new JLabel("No file opened", SwingConstants.CENTER);
         test.setFont(new Font("SF Pro", Font.BOLD, 13));
         test.setForeground(Color.WHITE);
         form.filesTabs.add(test);
 
+        // Load project from project Path
         final File file = new File(projectPath);
         final MyFile mf = new MyFile(file);
-
+        form.projectFiles.setCellRenderer(new TreeCellRenderer());
         form.projectFiles.setModel(new FileTreeModel(mf));
         form.projectFiles.setEditable(true);
-        form.projectFiles.addMouseListener(new MouseListener() {
-            @Override
-            public void mousePressed(MouseEvent e) {
+        form.projectFiles.addMouseListener(new LeftClickMenuFilesTree(form));
 
-                if (SwingUtilities.isRightMouseButton(e)) {
-
-                    int row = form.projectFiles.getClosestRowForLocation(e.getX(), e.getY());
-                    form.projectFiles.setSelectionRow(row);
-                    MyFile fileSelected = (MyFile) form.projectFiles.getLastSelectedPathComponent();
-                    System.out.println(fileSelected.getFile().getAbsolutePath());
-
-                    if (e.isPopupTrigger()) {
-                        RightClickMenuFilesTree menu = new RightClickMenuFilesTree(fileSelected, form.projectFiles);
-                        menu.show(e.getComponent(), e.getX(), e.getY());
-                        //form.projectFiles.removeRow
-
-                        FileTreeModel model = (FileTreeModel) form.projectFiles.getModel();
-                        //model.valueForPathChanged();
-                    }
-                } else {
-                    int row = form.projectFiles.getClosestRowForLocation(e.getX(), e.getY());
-                    form.projectFiles.setSelectionRow(row);
-                    MyFile fileSelected = (MyFile) form.projectFiles.getLastSelectedPathComponent();
-
-                    if (fileSelected.isDirectory())
-                        return;
-
-                    // Search in opened files if this isn't already opened
-                    var tabCount = form.filesTabs.getTabCount();
-                    for (int i = 1; i < tabCount; i++) {
-                        PingTabFileComponent tab = (PingTabFileComponent) form.filesTabs.getTabComponentAt(i);
-                        if (tab.getFilePath().equals(fileSelected.getFile().getAbsolutePath())) {
-                            // Already opened
-                            form.filesTabs.setSelectedIndex(i);
-                            return;
-                        }
-                    }
-
-                    System.out.println(fileSelected.getFile().getAbsolutePath());
-
-                    var newMenu = new OpenedFileMenu(fileSelected.getFile());
-                    form.filesTabs.addTab(fileSelected.getFile().getName(), newMenu.getPanel());
-                    var indexLastTab = form.filesTabs.getTabCount() - 1;
-                    form.filesTabs.setTabComponentAt(indexLastTab, new PingTabFileComponent(form.filesTabs));
-                    form.filesTabs.setSelectedIndex(indexLastTab);
-
-                    PingTabFileComponent pingTab = (PingTabFileComponent) form.filesTabs.getTabComponentAt(indexLastTab);
-                    pingTab.setMenu(newMenu);
-                    pingTab.setFilePath(fileSelected.getFile().getAbsolutePath());
-                    newMenu.tabComponent = pingTab;
-                }
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-        });
-
+        // Deny the possibility to edit a cell with a triple click (only with right click -> 'rename')
         DefaultTreeCellEditor editor = new DefaultTreeCellEditor(form.projectFiles, (DefaultTreeCellRenderer) form.projectFiles.getCellRenderer()) {
             @Override
             public boolean isCellEditable(EventObject event) {
@@ -194,83 +152,13 @@ public class mainForm {
         form.projectFiles.setCellEditor(editor);
 
 
-        JMenuBar menuBar = new JMenuBar();
+        // Create Menu
+        frame.setJMenuBar(PingMenuFactory.createAppMenuBar(frame));
 
-        JMenu menuFile = new JMenu("File");
-        JMenu menuWindow = new JMenu("Window");
-        menuBar.add(menuFile);
-        menuBar.add(menuWindow);
-
-        JMenuItem openProject = new JMenuItem("Open new project folder");
-        openProject.addActionListener(e ->
-        {
-            System.setProperty("apple.awt.fileDialogForDirectories", "true");
-            FileDialog fd = new FileDialog(frame);
-            fd.setDirectory("/");
-            fd.setLocation(50, 50);
-            fd.setVisible(true);
-
-            try {
-                File selectedFile = new File(fd.getFile());
-                System.out.println(selectedFile.getAbsolutePath());
-            } catch (Exception e2) {
-                JOptionPane.showMessageDialog(frame,
-                        "WARNING.",
-                        "Warning",
-                        JOptionPane.WARNING_MESSAGE);
-
-            }
-            System.setProperty("apple.awt.fileDialogForDirectories", "false");
-
-        });
-
-        JMenuItem saveCurrentFile = new JMenuItem("Save file");
-        saveCurrentFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.META_DOWN_MASK));
-        saveCurrentFile.getAccessibleContext().setAccessibleDescription("Save the current opened file in the editor.");
-        saveCurrentFile.addActionListener(e ->
-        {
-            var obj = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
-            if (obj instanceof RSyntaxTextArea) {
-                RSyntaxTextArea textArea = (RSyntaxTextArea) obj;
-                JTabbedPane pane = (JTabbedPane) textArea.getParent().getParent().getParent().getParent();
-                PingTabFileComponent tab = (PingTabFileComponent) pane.getTabComponentAt(pane.getSelectedIndex());
-
-                if (tab.getEdited()) {
-                    try {
-                        String fileContent = textArea.getDocument().getText(0, textArea.getDocument().getLength());
-                        Files.write(Paths.get(tab.getFilePath()), fileContent.getBytes(StandardCharsets.UTF_8));
-                        tab.setEdited(false);
-                    } catch (Exception exep) {
-                        exep.printStackTrace();
-                    }
-                }
-            }
-
-
-        });
-
-        menuFile.add(openProject);
-        menuFile.addSeparator();
-        menuFile.add(saveCurrentFile);
-
-        JMenuItem switchTheme = new JMenuItem("Switch to Dark/Light Theme");
-        menuWindow.add(switchTheme);
-
-        frame.setJMenuBar(menuBar);
-
-
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
-
-
+        // Set Frame visible
         frame.setVisible(true);
-
     }
 
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
