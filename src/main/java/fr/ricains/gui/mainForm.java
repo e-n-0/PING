@@ -1,15 +1,23 @@
 package fr.ricains.gui;
 
+import org.apache.commons.io.FileUtils;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+
 import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.StyleContext;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.EventObject;
 import java.util.Locale;
 
@@ -63,7 +71,7 @@ public class mainForm {
 
                 if (someEditedFiles) {
                     String ObjButtons[] = {"Yes", "No"};
-                    int PromptResult = JOptionPane.showOptionDialog(null, "You have some unsaved files in the project.\nAre you sure you want to exit?", "Online Examination System", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, ObjButtons, ObjButtons[1]);
+                    int PromptResult = JOptionPane.showOptionDialog(null, "You have some unsaved files in the project.\nAre you sure you want to exit?", "Exit", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, ObjButtons, ObjButtons[1]);
                     if (PromptResult == JOptionPane.YES_OPTION) {
                         System.exit(0);
                     }
@@ -206,8 +214,6 @@ public class mainForm {
                 File selectedFile = new File(fd.getFile());
                 System.out.println(selectedFile.getAbsolutePath());
             } catch (Exception e2) {
-                //JOptionPane.showMessageDialog(frame, "mdr");
-                //JOptionPane.showConfirmDialog(frame, "Wow, works on the Mac!", "Inside open()", JOptionPane.YES_NO_OPTION);
                 JOptionPane.showMessageDialog(frame,
                         "WARNING.",
                         "Warning",
@@ -221,7 +227,27 @@ public class mainForm {
         JMenuItem saveCurrentFile = new JMenuItem("Save file");
         saveCurrentFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.META_DOWN_MASK));
         saveCurrentFile.getAccessibleContext().setAccessibleDescription("Save the current opened file in the editor.");
-        saveCurrentFile.addActionListener(e -> System.out.println(e));
+        saveCurrentFile.addActionListener(e ->
+        {
+            var obj = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+            if (obj instanceof RSyntaxTextArea) {
+                RSyntaxTextArea textArea = (RSyntaxTextArea) obj;
+                JTabbedPane pane = (JTabbedPane) textArea.getParent().getParent().getParent().getParent();
+                PingTabFileComponent tab = (PingTabFileComponent) pane.getTabComponentAt(pane.getSelectedIndex());
+
+                if (tab.getEdited()) {
+                    try {
+                        String fileContent = textArea.getDocument().getText(0, textArea.getDocument().getLength());
+                        Files.write(Paths.get(tab.getFilePath()), fileContent.getBytes(StandardCharsets.UTF_8));
+                        tab.setEdited(false);
+                    } catch (Exception exep) {
+                        exep.printStackTrace();
+                    }
+                }
+            }
+
+
+        });
 
         menuFile.add(openProject);
         menuFile.addSeparator();
