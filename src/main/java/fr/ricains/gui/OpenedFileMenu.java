@@ -59,25 +59,20 @@ public class OpenedFileMenu {
 
         sp.setBorder(BorderFactory.createEmptyBorder());
 
-        textArea.setBackground(new Color(19, 19, 19));
-        textArea.setForeground(Color.white);
+        textArea.setBackground(PingThemeManager.textAreaBackground());
+        textArea.setForeground(PingThemeManager.getFontColor());
         textArea.setFont(new Font("SF Pro", Font.PLAIN, 13));
-        /*
-         * textArea.setTabLineColor(new Color(54, 54, 54));
-         * textArea.setSelectionColor(new Color(54, 54, 54));
-         * textArea.setSelectedTextColor(new Color(54, 54, 54));
-         * textArea.setMargﬁinLineColor(new Color(54, 54, 54));
-         */
-        textArea.setCaretColor(Color.white);
-        textArea.setCurrentLineHighlightColor(new Color(54, 54, 54));
-        textArea.setSelectedTextColor(new Color(54, 54, 54));
 
-        sp.getGutter().setBackground(new Color(22, 22, 22));
+        textArea.setCaretColor(PingThemeManager.getFontColor());
+        textArea.setCurrentLineHighlightColor(PingThemeManager.tabBackground());
+        textArea.setSelectedTextColor(PingThemeManager.tabBackground());
+
+        sp.getGutter().setBackground(PingThemeManager.gutterBackground());
 
         sp.getGutter().setBorder(new Gutter.GutterBorder(0, 25, 0, 15));
-        sp.getGutter().setBorderColor(new Color(22, 22, 22));
+        sp.getGutter().setBorderColor(PingThemeManager.gutterBackground());
 
-        sp.getGutter().setLineNumberColor(new Color(149, 149, 149));
+        sp.getGutter().setLineNumberColor(PingThemeManager.gutterFontColor());
         sp.getGutter().setLineNumberFont(new Font("SF Pro", Font.PLAIN, 13));
 
         sp.getGutter().setSpacingBetweenLineNumbersAndFoldIndicator(10);
@@ -100,7 +95,7 @@ public class OpenedFileMenu {
         ac.setAutoActivationDelay(500); // Number of milliseconds to debounce the popup window. Must be >= 0
 
         sp.setFoldIndicatorEnabled(false);
-        sp.setBackground(new Color(19, 19, 19));
+        sp.setBackground(PingThemeManager.textAreaBackground());
         sp.setFont(new Font("SF Pro", Font.PLAIN, 13));
 
         ac.install(textArea);
@@ -112,6 +107,7 @@ public class OpenedFileMenu {
 
         cp.add(sp);
         newPanel = cp;
+        newPanel.setForeground(PingThemeManager.getFontColor());
 
         try {
             var r = new BufferedReader(new FileReader(file));
@@ -157,8 +153,8 @@ public class OpenedFileMenu {
 
         scheme.getStyle(Token.LITERAL_BOOLEAN).foreground = new Color(78, 146, 207);
 
-        scheme.getStyle(Token.OPERATOR).foreground = new Color(255, 255, 255);
-        scheme.getStyle(Token.SEPARATOR).foreground = new Color(255, 255, 255);
+        scheme.getStyle(Token.OPERATOR).foreground = PingThemeManager.getFontColor();
+        scheme.getStyle(Token.SEPARATOR).foreground = PingThemeManager.getFontColor();
 
         //scheme.getStyle(Token.IDENTIFIER).foreground = Color.PINK;
 

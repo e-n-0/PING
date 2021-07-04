@@ -16,6 +16,8 @@ public class PingProjectFilesScrollBar extends BasicScrollBarUI {
         button.setPreferredSize(zeroDim);
         button.setMinimumSize(zeroDim);
         button.setMaximumSize(zeroDim);
+
+        button.setBackground(PingThemeManager.projectFileBackground());
         return button;
     }
 
@@ -31,8 +33,8 @@ public class PingProjectFilesScrollBar extends BasicScrollBarUI {
 
     @Override
     protected void configureScrollBarColors() {
-        this.thumbColor = new Color(54, 54, 54);
-        this.trackColor = new Color(36, 36, 36);
+        this.thumbColor = PingThemeManager.tabBackground();
+        this.trackColor = PingThemeManager.projectFileBackground();
     }
 
 }

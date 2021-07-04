@@ -19,9 +19,9 @@ public class PingTabbedPane extends BasicTabbedPaneUI {
         super.paintTabBackground(g, tabPlacement, tabIndex, x, y, w, h, isSelected);
 
         if(isSelected)
-            g.setColor(new Color(54, 54, 54));
+            g.setColor(PingThemeManager.tabBackgroundSelected());
         else
-            g.setColor(new Color(34, 34, 34));
+            g.setColor(PingThemeManager.tabBackground());
 
         g.fillRect(x, y, w, h);
     }
@@ -51,10 +51,10 @@ public class PingTabbedPane extends BasicTabbedPaneUI {
         if(tabIndex == 1)
             return;
 
-        g.setColor(new Color(19,19,19));
+        g.setColor(new Color(19,19,19)); // Cross color
         g.drawRect(x, y-1, w, h+1);
         if(isSelected)
-            g.setColor(new Color(121,134,133));
+            g.setColor(new Color(121,134,133)); // Cross color background
     }
 
     @Override

@@ -64,7 +64,7 @@ public class PingTabFileComponent extends JPanel {
             }
         };
 
-        label.setForeground(Color.pink);
+        label.setForeground(PingThemeManager.getFontColor());
         label.setFont(new Font("SF Pro", Font.PLAIN, 14));
 
         add(label);
@@ -87,8 +87,8 @@ public class PingTabFileComponent extends JPanel {
         {
             Shape circleShape = new Ellipse2D.Double(2, 6, 10, 10);
 
-            g2d.setColor(Color.orange);
-            g2d.setBackground(Color.orange);
+            g2d.setColor(PingThemeManager.circleFileChange());
+            g2d.setBackground(PingThemeManager.circleFileChange());
 
             g2d.draw(circleShape);
             g2d.fill(circleShape);
@@ -105,7 +105,7 @@ public class PingTabFileComponent extends JPanel {
             //Make it transparent
             setContentAreaFilled(false);
             //No need to be focusable
-            setBackground(new Color(42,42,42));
+            setBackground(PingThemeManager.tabCloseButtonSelected());
 
             setFocusable(false);
             setBorder(BorderFactory.createEtchedBorder());

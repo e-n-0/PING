@@ -11,10 +11,10 @@ public class TreeCellRenderer extends DefaultTreeCellRenderer {
         super.getTreeCellRendererComponent(tree, value, sel, exp, leaf, row, hasFocus);
         //String node = (String) ((DefaultMutableTreeNode) value).getUserObject();
 
-        setForeground(Color.WHITE);
-        setBackground(new Color(36, 36, 36));
-        setBackgroundSelectionColor(new Color(54,54,54));
-        setBackgroundNonSelectionColor(new Color(36, 36, 36));
+        setForeground(PingThemeManager.getFontColor());
+        setBackground(PingThemeManager.projectFileBackground());
+        setBackgroundSelectionColor(PingThemeManager.tabBackground());
+        setBackgroundNonSelectionColor(PingThemeManager.projectFileBackground());
         setFont(new Font("SF Pro Text", Font.PLAIN, 13));
 
         return this;

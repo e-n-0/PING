@@ -117,6 +117,17 @@ public class mainForm {
         return selectedFile;
     }
 
+    public void setFormColors() {
+        this.panel1.setBackground(PingThemeManager.projectFileBackground());
+        this.splitMainView.setBackground(PingThemeManager.tabHeaderBackground());
+        this.splitFilesTree.setBackground(PingThemeManager.projectFileBackground());
+        this.splitNameSplitButton.setBackground(PingThemeManager.projectFileBackground());
+        this.projectFilesText.setForeground(PingThemeManager.getFontColor());
+        this.scrollFilesProject.setBackground(PingThemeManager.projectFileBackground());
+        this.projectFiles.setBackground(PingThemeManager.projectFileBackground());
+
+    }
+
     public static void constructMainForm(String projectPath) {
 
         // Config Main Form
@@ -126,6 +137,7 @@ public class mainForm {
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(configWindowCloseEvent(form, frame));
         frame.pack();
+        form.setFormColors();
 
         // Set the Window in the center of the screen
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -139,7 +151,7 @@ public class mainForm {
 
         // Config Scroll for JTree (Project files)
         JPanel blackCorner = new JPanel();
-        blackCorner.setBackground(new Color(36, 36, 36));
+        blackCorner.setBackground(PingThemeManager.projectFileBackground());
         form.scrollFilesProject.setCorner(JScrollPane.LOWER_RIGHT_CORNER, blackCorner);
         form.scrollFilesProject.getVerticalScrollBar().setUI(new PingProjectFilesScrollBar());
         form.scrollFilesProject.getHorizontalScrollBar().setUI(new PingProjectFilesScrollBar());
@@ -149,7 +161,7 @@ public class mainForm {
         form.filesTabs.setUI(new PingTabbedPane());
         JLabel test = new JLabel("No file opened", SwingConstants.CENTER);
         test.setFont(new Font("SF Pro", Font.BOLD, 13));
-        test.setForeground(Color.WHITE);
+        test.setForeground(PingThemeManager.getFontColor());
         form.filesTabs.add(test);
 
         // Load project from project Path
@@ -199,7 +211,7 @@ public class mainForm {
     private void $$$setupUI$$$() {
         panel1 = new JPanel();
         panel1.setLayout(new GridBagLayout());
-        panel1.setBackground(new Color(-15198184));
+        panel1.setBackground(new Color(-16181241));
         panel1.setForeground(new Color(-1));
         panel1.setPreferredSize(new Dimension(1200, 600));
         splitMainView = new JSplitPane();
