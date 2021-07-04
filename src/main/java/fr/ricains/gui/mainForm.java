@@ -123,7 +123,7 @@ public class mainForm {
     public static void constructMainForm(String projectPath) {
 
         // Config Main Form
-        JFrame frame = new JFrame("Les Ricains Editor");
+        JFrame frame = new JFrame("Les Ricains Editor -- " + new File(projectPath).getName());
         var form = new mainForm();
         frame.setContentPane(form.panel1);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
