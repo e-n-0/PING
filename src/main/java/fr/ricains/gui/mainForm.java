@@ -66,7 +66,7 @@ public class mainForm {
 
     }
 
-    private static WindowAdapter configWindowCloseEvent(mainForm form) {
+    private static WindowAdapter configWindowCloseEvent(mainForm form, JFrame frame) {
         return new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
@@ -86,10 +86,11 @@ public class mainForm {
                     String ObjButtons[] = {"Yes", "No"};
                     int PromptResult = JOptionPane.showOptionDialog(null, "You have some unsaved files in the project.\nAre you sure you want to exit?", "Exit", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, ObjButtons, ObjButtons[1]);
                     if (PromptResult == JOptionPane.YES_OPTION) {
-                        System.exit(0);
+                        frame.dispose();
                     }
-                } else
-                    System.exit(0);
+                } else {
+                    frame.dispose();
+                }
             }
         };
     }
@@ -111,6 +112,8 @@ public class mainForm {
         }
         System.setProperty("apple.awt.fileDialogForDirectories", "false");
 
+        frame.dispose();
+
         return selectedFile;
     }
 
@@ -121,7 +124,7 @@ public class mainForm {
         var form = new mainForm();
         frame.setContentPane(form.panel1);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(configWindowCloseEvent(form));
+        frame.addWindowListener(configWindowCloseEvent(form, frame));
         frame.pack();
 
         // Set the Window in the center of the screen
