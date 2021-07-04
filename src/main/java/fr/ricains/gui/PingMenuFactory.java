@@ -17,6 +17,8 @@ public abstract class PingMenuFactory {
     {
         JMenu menuFile = new JMenu("File");
         JMenuItem openProject = new JMenuItem("Open new project folder");
+
+        // Open new instance of mainForm on another Project Folder
         openProject.addActionListener(e ->
         {
             System.setProperty("apple.awt.fileDialogForDirectories", "true");
@@ -25,18 +27,14 @@ public abstract class PingMenuFactory {
             fd.setLocation(50, 50);
             fd.setVisible(true);
 
+            String selectedFile = "";
             try {
-                File selectedFile = new File(fd.getFile());
-                System.out.println(selectedFile.getAbsolutePath());
-            } catch (Exception e2) {
-                JOptionPane.showMessageDialog(frame,
-                        "WARNING.",
-                        "Warning",
-                        JOptionPane.WARNING_MESSAGE);
+                selectedFile = fd.getDirectory() + fd.getFile();
+                mainForm.constructMainForm(selectedFile);
 
-            }
+            } catch (Exception e2) {}
+
             System.setProperty("apple.awt.fileDialogForDirectories", "false");
-
         });
 
         JMenuItem saveCurrentFile = new JMenuItem("Save file");
