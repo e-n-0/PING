@@ -1,7 +1,9 @@
 package fr.ricains.gui;
 
 import javax.swing.*;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.text.StyleContext;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -24,6 +26,7 @@ public class mainForm {
     private JSplitPane splitMainView;
     private JLabel projectFilesText;
     private JTabbedPane filesTabs;
+    private JScrollPane scrollFilesProject;
     private JPanel testpanelUntitled;
 
     public mainForm() {
@@ -52,6 +55,16 @@ public class mainForm {
         form.splitNameSplitButton.setBorder(BorderFactory.createEmptyBorder());
         form.splitFilesTree.setBorder(BorderFactory.createEmptyBorder());
         form.splitMainView.setBorder(BorderFactory.createEmptyBorder());
+        form.splitMainView.setContinuousLayout(true);
+
+        form.scrollFilesProject.setBorder(BorderFactory.createEmptyBorder());
+
+        JPanel blackCorner = new JPanel();
+        blackCorner.setBackground(new Color(36, 36, 36));
+        form.scrollFilesProject.setCorner(JScrollPane.LOWER_RIGHT_CORNER, blackCorner);
+
+        form.scrollFilesProject.getVerticalScrollBar().setUI(new PingProjectFilesScrollBar());
+        form.scrollFilesProject.getHorizontalScrollBar().setUI(new PingProjectFilesScrollBar());
 
         form.projectFiles.setCellRenderer(new TreeCellRenderer());
 
@@ -196,6 +209,10 @@ public class mainForm {
         frame.setJMenuBar(menuBar);
 
 
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
+
+
         frame.setVisible(true);
 
     }
@@ -290,6 +307,8 @@ public class mainForm {
         button1.setVerticalAlignment(0);
         button1.putClientProperty("html.disable", Boolean.FALSE);
         splitNameSplitButton.setRightComponent(button1);
+        scrollFilesProject = new JScrollPane();
+        splitFilesTree.setRightComponent(scrollFilesProject);
         projectFiles = new JTree();
         projectFiles.setAutoscrolls(false);
         projectFiles.setBackground(new Color(-14408668));
@@ -301,7 +320,7 @@ public class mainForm {
         projectFiles.setShowsRootHandles(true);
         projectFiles.putClientProperty("JTree.lineStyle", "");
         projectFiles.putClientProperty("html.disable", Boolean.FALSE);
-        splitFilesTree.setRightComponent(projectFiles);
+        scrollFilesProject.setViewportView(projectFiles);
         filesTabs = new JTabbedPane();
         filesTabs.setBackground(new Color(-15329770));
         filesTabs.setFocusTraversalPolicyProvider(false);

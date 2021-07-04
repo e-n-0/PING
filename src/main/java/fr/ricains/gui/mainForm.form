@@ -103,24 +103,31 @@
                   </component>
                 </children>
               </splitpane>
-              <component id="715a4" class="javax.swing.JTree" binding="projectFiles">
+              <scrollpane id="f95e8" binding="scrollFilesProject">
                 <constraints>
                   <splitpane position="right"/>
                 </constraints>
-                <properties>
-                  <autoscrolls value="false"/>
-                  <background color="-14408668"/>
-                  <font name="SF Pro" size="13" style="0"/>
-                  <foreground color="-14408668"/>
-                  <inheritsPopupMenu value="false"/>
-                  <rootVisible value="false"/>
-                  <showsRootHandles value="true"/>
-                </properties>
-                <clientProperties>
-                  <JTree.lineStyle class="java.lang.String" value=""/>
-                  <html.disable class="java.lang.Boolean" value="false"/>
-                </clientProperties>
-              </component>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="715a4" class="javax.swing.JTree" binding="projectFiles">
+                    <constraints/>
+                    <properties>
+                      <autoscrolls value="false"/>
+                      <background color="-14408668"/>
+                      <font name="SF Pro" size="13" style="0"/>
+                      <foreground color="-14408668"/>
+                      <inheritsPopupMenu value="false"/>
+                      <rootVisible value="false"/>
+                      <showsRootHandles value="true"/>
+                    </properties>
+                    <clientProperties>
+                      <JTree.lineStyle class="java.lang.String" value=""/>
+                      <html.disable class="java.lang.Boolean" value="false"/>
+                    </clientProperties>
+                  </component>
+                </children>
+              </scrollpane>
             </children>
           </splitpane>
           <tabbedpane id="51d83" binding="filesTabs">
