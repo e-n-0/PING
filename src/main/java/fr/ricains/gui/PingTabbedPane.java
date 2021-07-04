@@ -9,7 +9,6 @@ public class PingTabbedPane extends BasicTabbedPaneUI {
     @Override
     protected JButton createScrollButton(int direction) {
         JButton defaultButton = super.createScrollButton(direction);
-        System.out.println(defaultButton.getDisabledIcon());
         defaultButton.setBorder(BorderFactory.createEmptyBorder());
         defaultButton.addActionListener(e -> this.navigateSelectedTab(direction));
         return defaultButton;

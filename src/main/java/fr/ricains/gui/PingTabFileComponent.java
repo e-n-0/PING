@@ -121,7 +121,15 @@ public class PingTabFileComponent extends JPanel {
         public void actionPerformed(ActionEvent e) {
             int i = pane.indexOfTabComponent(PingTabFileComponent.this);
             if (i != -1) {
-                pane.remove(i);
+                if(isEdited)
+                {
+                    // Be sure to close the file without saving
+                    var result = JOptionPane.showConfirmDialog(null, "This file have unsaved change.\nDo you want to close this file without saving?", "Unsaved changes", JOptionPane.YES_NO_OPTION);
+                    if(result == JOptionPane.YES_OPTION)
+                        pane.remove(i);
+                }
+                else
+                    pane.remove(i);
             }
         }
 
