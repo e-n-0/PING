@@ -53,6 +53,15 @@ public class LeftClickMenuFilesTree implements MouseListener {
             System.out.println(fileSelected.getFile().getAbsolutePath());
 
             var newMenu = new OpenedFileMenu(fileSelected.getFile());
+            if(newMenu.error)
+            {
+                // An error occured when opening the file
+                JOptionPane.showMessageDialog(null,
+                        "Failed to open the file \"" + fileSelected.getFile().getName() + "\"",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             form.getFilesTabs().addTab(fileSelected.getFile().getName(), newMenu.getPanel());
             var indexLastTab = form.getFilesTabs().getTabCount() - 1;
             form.getFilesTabs().setTabComponentAt(indexLastTab, new PingTabFileComponent(form.getFilesTabs()));

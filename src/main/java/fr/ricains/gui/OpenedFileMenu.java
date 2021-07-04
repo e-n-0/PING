@@ -26,6 +26,8 @@ public class OpenedFileMenu {
     private final File file;
     public PingTabFileComponent tabComponent;
 
+    public boolean error = false;
+
     public PingTabFileComponent getTabComponent() {
         return tabComponent;
     }
@@ -114,6 +116,7 @@ public class OpenedFileMenu {
             textArea.read(r, null);
         } catch (Exception e) {
             e.printStackTrace();
+            this.error = true;
         }
 
         textArea.getDocument().addDocumentListener(new DocumentListener() {

@@ -154,7 +154,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>mainForm</mainClass>
+                                    <mainClass>fr.epita.assistants.Main</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>
