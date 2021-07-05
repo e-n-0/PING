@@ -177,7 +177,6 @@ public class mainForm {
         this.projectFiles.setBackground(PingThemeManager.projectFileBackground());
         this.splitView.setBackground(PingThemeManager.tabHeaderBackground());
 
-
         this.scrollFilesProject.getVerticalScrollBar().setUI(new PingProjectFilesScrollBar());
         this.scrollFilesProject.getHorizontalScrollBar().setUI(new PingProjectFilesScrollBar());
 
@@ -224,7 +223,7 @@ public class mainForm {
                 return;
 
             this.splitView.setResizeWeight(0.5);
-            this.splitView.setDividerSize(10);
+            this.splitView.setDividerSize(3);
             this.splitView.resetToPreferredSizes();
 
             moveFileTabToFileTab(this, this.getFilesTabs(), this.getFilesTabs2(), this.getFilesTabs().getSelectedIndex());
@@ -249,7 +248,7 @@ public class mainForm {
                     this.splitView.getRightComponent().setMinimumSize(new Dimension());
                     this.splitView.setResizeWeight(1.0d);
                     this.splitView.setDividerLocation(1.0d);
-                    this.splitView.setDividerSize(0);
+                    //this.splitView.setDividerSize(0);
                     this.setFocusedFilesTab(this.getFilesTabs()); // refocus on the first tab
 
                     this.splitViewEnabled = false;
@@ -301,6 +300,7 @@ public class mainForm {
         form.filesTabs2.setUI(new PingTabbedPane2());
         form.splitView.setResizeWeight(1);
         form.splitView.setDividerSize(0);
+        form.splitView.setContinuousLayout(true);
 
         // Event triggered when tab change / Used by split view screen
         form.filesTabs.addChangeListener(e -> form.setFocusedFilesTab((JTabbedPane) e.getSource()));
