@@ -10,6 +10,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.prefs.Preferences;
 
 public abstract class PingMenuFactory {
 
@@ -50,10 +51,45 @@ public abstract class PingMenuFactory {
         return menuFile;
     }
 
-    private static JMenu createWindowMenu()
+    private static JMenu createWindowMenu(JFrame frame)
     {
         JMenu menuWindow = new JMenu("Window");
         JMenuItem switchTheme = new JMenuItem("Switch to Dark/Light Theme");
+
+        switchTheme.addActionListener(e ->
+        {
+            Preferences prefs = Preferences.userNodeForPackage(PingThemeManager.class);
+
+            if(PingThemeManager.theme.equals(PingThemeManager.Theme.DARK))
+            {
+                PingThemeManager.theme = PingThemeManager.Theme.LIGHT;
+                prefs.put("THEME", "l");
+            }
+            else
+            {
+                PingThemeManager.theme = PingThemeManager.Theme.DARK;
+                prefs.put("THEME", "d");
+            }
+
+            // Get all Frame visible
+            System.out.println(Frame.getFrames().length);
+            for(var elem : Frame.getFrames())
+            {
+                PingJFrame pingFrame = (PingJFrame) elem;
+                mainForm mainForm = pingFrame.getForm();
+                mainForm.setFormColors();
+
+                var tabCount = mainForm.getFilesTabs().getTabCount();
+                for (int i = 1; i < tabCount; i++) {
+                    PingTabFileComponent tab = (PingTabFileComponent) mainForm.getFilesTabs().getTabComponentAt(i);
+                    tab.getMenu().setFormColors();
+                }
+            }
+
+            frame.invalidate();
+            frame.repaint();
+        });
+
         menuWindow.add(switchTheme);
         return menuWindow;
     }
@@ -63,7 +99,7 @@ public abstract class PingMenuFactory {
         JMenuBar menuBar = new JMenuBar();
 
         menuBar.add(createFileMenu(frame));
-        menuBar.add(createWindowMenu());
+        menuBar.add(createWindowMenu(frame));
 
         return menuBar;
     }

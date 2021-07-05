@@ -13,7 +13,7 @@ public class TreeCellRenderer extends DefaultTreeCellRenderer {
 
         setForeground(PingThemeManager.getFontColor());
         setBackground(PingThemeManager.projectFileBackground());
-        setBackgroundSelectionColor(PingThemeManager.tabBackground());
+        setBackgroundSelectionColor(PingThemeManager.tabBackgroundSelected());
         setBackgroundNonSelectionColor(PingThemeManager.projectFileBackground());
         setFont(new Font("SF Pro Text", Font.PLAIN, 13));
 

@@ -3,6 +3,7 @@ package fr.ricains.gui;
 import org.apache.commons.io.FileUtils;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
@@ -15,6 +16,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -33,8 +35,13 @@ public class mainForm {
     private JTabbedPane filesTabs;
     private JScrollPane scrollFilesProject;
     private JPanel testpanelUntitled;
+    private JLabel noOpenedFileTextLabel = null;
 
     public mainForm() {
+    }
+
+    public JLabel getNoOpenedFileTextLabel() {
+        return noOpenedFileTextLabel;
     }
 
     public JTree getProjectFiles() {
@@ -126,17 +133,31 @@ public class mainForm {
         this.scrollFilesProject.setBackground(PingThemeManager.projectFileBackground());
         this.projectFiles.setBackground(PingThemeManager.projectFileBackground());
 
+        if (this.noOpenedFileTextLabel != null)
+            this.noOpenedFileTextLabel.setForeground(PingThemeManager.getFontColor());
+
+        URL iconURL = null;
+
+        if (PingThemeManager.theme.equals(PingThemeManager.Theme.DARK)) {
+            iconURL = getClass().getClassLoader().getResource("Double view.png");
+        } else {
+            iconURL = getClass().getClassLoader().getResource("Double view-white.png");
+        }
+
+        ImageIcon icon = new ImageIcon(iconURL, "Close this file");
+        this.button1.setIcon(icon);
     }
 
     public static void constructMainForm(String projectPath) {
 
         // Config Main Form
-        JFrame frame = new JFrame("Les Ricains Editor -- " + new File(projectPath).getName());
+        PingJFrame frame = new PingJFrame("Les Ricains Editor -- " + new File(projectPath).getName());
         var form = new mainForm();
         frame.setContentPane(form.panel1);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(configWindowCloseEvent(form, frame));
         frame.pack();
+        frame.setForm(form);
         form.setFormColors();
 
         // Set the Window in the center of the screen
@@ -163,6 +184,7 @@ public class mainForm {
         test.setFont(new Font("SF Pro", Font.BOLD, 13));
         test.setForeground(PingThemeManager.getFontColor());
         form.filesTabs.add(test);
+        form.noOpenedFileTextLabel = test;
 
         // Load project from project Path
         final File file = new File(projectPath);

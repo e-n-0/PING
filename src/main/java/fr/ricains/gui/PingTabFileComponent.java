@@ -17,6 +17,9 @@ public class PingTabFileComponent extends JPanel {
     private String filePath;
     private Boolean isEdited = false;
 
+    private JLabel label;
+    private JButton button;
+
     public String getFilePath() {
         return filePath;
     }
@@ -75,11 +78,17 @@ public class PingTabFileComponent extends JPanel {
         add(button);
         //add more space to the top of the component
         button.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
+
+        this.button = button;
+        this.label = label;
     }
 
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+
+        this.label.setForeground(PingThemeManager.getFontColor());
+        this.button.repaint();
 
         Graphics2D g2d = (Graphics2D) g;
 
@@ -140,6 +149,8 @@ public class PingTabFileComponent extends JPanel {
         //paint the cross
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+
+            this.setBackground(PingThemeManager.tabCloseButtonSelected());
 
 
             URL imgURL = getClass().getClassLoader().getResource("Close.png");

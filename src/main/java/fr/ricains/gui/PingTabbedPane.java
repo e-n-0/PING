@@ -51,7 +51,7 @@ public class PingTabbedPane extends BasicTabbedPaneUI {
         if(tabIndex == 1)
             return;
 
-        g.setColor(new Color(19,19,19)); // Cross color
+        g.setColor(PingThemeManager.tabBorderBetween()); // Border between 2 tabs
         g.drawRect(x, y-1, w, h+1);
         if(isSelected)
             g.setColor(new Color(121,134,133)); // Cross color background

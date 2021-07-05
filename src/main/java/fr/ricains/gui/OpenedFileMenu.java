@@ -28,10 +28,34 @@ public class OpenedFileMenu {
     private final File file;
     public PingTabFileComponent tabComponent;
 
+    private RSyntaxTextArea textArea;
+    private RTextScrollPane scrollPane;
+
     public boolean error = false;
 
     public PingTabFileComponent getTabComponent() {
         return tabComponent;
+    }
+
+    public void setFormColors()
+    {
+        textArea.setBackground(PingThemeManager.textAreaBackground());
+        textArea.setForeground(PingThemeManager.getFontColor());
+
+        textArea.setCaretColor(PingThemeManager.getFontColor());
+        textArea.setCurrentLineHighlightColor(PingThemeManager.tabBackground());
+        textArea.setSelectedTextColor(PingThemeManager.tabBackground());
+
+        scrollPane.getGutter().setBackground(PingThemeManager.gutterBackground());
+        scrollPane.getGutter().setBorderColor(PingThemeManager.gutterBackground());
+        scrollPane.getGutter().setLineNumberColor(PingThemeManager.gutterFontColor());
+
+        scrollPane.setBackground(PingThemeManager.textAreaBackground());
+
+        newPanel.setForeground(PingThemeManager.getFontColor());
+
+        changeColorScheme(textArea);
+
     }
 
     public OpenedFileMenu(File file) {
@@ -53,9 +77,11 @@ public class OpenedFileMenu {
         JPanel cp = new JPanel(new BorderLayout());
 
         RSyntaxTextArea textArea = new RSyntaxTextArea(20, 60);
+        this.textArea = textArea;
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         textArea.setCodeFoldingEnabled(true);
         RTextScrollPane sp = new RTextScrollPane(textArea);
+        this.scrollPane = sp;
 
         sp.setBorder(BorderFactory.createEmptyBorder());
 

@@ -32,7 +32,7 @@ public abstract class PingThemeManager {
     public static Color tabBackgroundSelected()
     {
         if(theme.equals(Theme.DARK))
-            return new Color(34, 34, 34);
+            return new Color(54, 54, 54);
         else
             return Color.white;
     }
@@ -41,7 +41,7 @@ public abstract class PingThemeManager {
     public static Color tabBackground()
     {
         if(theme.equals(Theme.DARK))
-            return new Color(220, 220, 220);
+            return new Color(34, 34, 34);
         else
             return new Color(220, 220, 220);
     }
@@ -50,9 +50,9 @@ public abstract class PingThemeManager {
     public static Color tabHeaderBackground()
     {
         if(theme.equals(Theme.DARK))
-            return new Color(233, 233, 233);
+            return new Color(22, 22, 22);
         else
-            return new Color(220, 220, 220);
+            return new Color(240, 240, 240); // #e9e9e9
     }
 
     // #424242
@@ -62,6 +62,15 @@ public abstract class PingThemeManager {
             return new Color(42,42,42);
         else
             return new Color(227, 227, 227);
+    }
+
+    // #
+    public static Color tabBorderBetween()
+    {
+        if(theme.equals(Theme.DARK))
+            return new Color(19,19,19);
+        else
+            return Color.white;
     }
 
     // #161616
@@ -97,7 +106,7 @@ public abstract class PingThemeManager {
         if(theme.equals(Theme.DARK))
             return Color.orange;
         else
-            return Color.white;
+            return new Color(199, 156, 0);
     }
 
 }
