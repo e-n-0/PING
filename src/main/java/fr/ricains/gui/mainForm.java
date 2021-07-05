@@ -1,47 +1,38 @@
 package fr.ricains.gui;
 
-import org.apache.commons.io.FileUtils;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
-import javax.swing.plaf.basic.BasicScrollBarUI;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.StyleContext;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.EventObject;
 import java.util.Locale;
 
 public class mainForm {
 
     private JPanel panel1;
-    private JButton button1;
+    private JButton splitButton;
     private JTree projectFiles;
     private JSplitPane splitNameSplitButton;
     private JSplitPane splitFilesTree;
     private JSplitPane splitMainView;
     private JLabel projectFilesText;
     private JTabbedPane filesTabs;
+    private JTabbedPane filesTabs2;
     private JScrollPane scrollFilesProject;
-    private JPanel testpanelUntitled;
+    private JSplitPane splitView;
     private JLabel noOpenedFileTextLabel = null;
 
-    public mainForm() {
-    }
+    private JTabbedPane focusedFilesTab;
 
-    public JLabel getNoOpenedFileTextLabel() {
-        return noOpenedFileTextLabel;
+    private boolean splitViewEnabled = false;
+
+    public boolean isSplitViewEnabled() {
+        return splitViewEnabled;
     }
 
     public JTree getProjectFiles() {
@@ -50,6 +41,26 @@ public class mainForm {
 
     public JTabbedPane getFilesTabs() {
         return filesTabs;
+    }
+
+    public JTabbedPane getFilesTabs2() {
+        return filesTabs2;
+    }
+
+    public JSplitPane getSplitView() {
+        return splitView;
+    }
+
+    public JTabbedPane getFocusedFilesTab() {
+        return focusedFilesTab;
+    }
+
+    public void setFocusedFilesTab(JTabbedPane focusedFilesTab) {
+        System.out.println("Focused File Tab updated");
+        this.focusedFilesTab = focusedFilesTab;
+    }
+
+    public mainForm() {
     }
 
     public static void setSystemUIConfiguration() {
@@ -73,24 +84,27 @@ public class mainForm {
 
     }
 
+    private static boolean hasSomeEditedFiles(JTabbedPane tabbedPane) {
+        // Check if there is some unsaved opened files
+        var tabCount = tabbedPane.getTabCount();
+        var someEditedFiles = false;
+        for (int i = 1; i < tabCount; i++) {
+            PingTabFileComponent tab = (PingTabFileComponent) tabbedPane.getTabComponentAt(i);
+            if (tab.getEdited()) {
+                someEditedFiles = true;
+                break;
+            }
+        }
+
+        return someEditedFiles;
+    }
+
     private static WindowAdapter configWindowCloseEvent(mainForm form, JFrame frame) {
         return new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
-
-                // Check if there is some unsaved opened files
-                var tabCount = form.filesTabs.getTabCount();
-                var someEditedFiles = false;
-                for (int i = 1; i < tabCount; i++) {
-                    PingTabFileComponent tab = (PingTabFileComponent) form.filesTabs.getTabComponentAt(i);
-                    if (tab.getEdited()) {
-                        someEditedFiles = true;
-                        break;
-                    }
-                }
-
-                if (someEditedFiles) {
-                    String ObjButtons[] = {"Yes", "No"};
+                if (hasSomeEditedFiles(form.getFilesTabs()) || hasSomeEditedFiles(form.getFilesTabs2())) {
+                    String[] ObjButtons = {"Yes", "No"};
                     int PromptResult = JOptionPane.showOptionDialog(null, "You have some unsaved files in the project.\nAre you sure you want to exit?", "Exit", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, ObjButtons, ObjButtons[1]);
                     if (PromptResult == JOptionPane.YES_OPTION) {
                         frame.dispose();
@@ -115,13 +129,42 @@ public class mainForm {
         String selectedFile = "";
         try {
             selectedFile = fd.getFile() != null ? fd.getDirectory() + fd.getFile() : "";
-        } catch (Exception e2) {
+        } catch (Exception ignored) {
         }
         System.setProperty("apple.awt.fileDialogForDirectories", "false");
 
         frame.dispose();
 
         return selectedFile;
+    }
+
+    public static void setupClickFocusedTabbed(mainForm form, JTabbedPane pane) {
+        pane.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                form.setFocusedFilesTab(pane);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
     }
 
     public void setFormColors() {
@@ -132,6 +175,8 @@ public class mainForm {
         this.projectFilesText.setForeground(PingThemeManager.getFontColor());
         this.scrollFilesProject.setBackground(PingThemeManager.projectFileBackground());
         this.projectFiles.setBackground(PingThemeManager.projectFileBackground());
+        this.splitView.setBackground(PingThemeManager.tabHeaderBackground());
+
 
         this.scrollFilesProject.getVerticalScrollBar().setUI(new PingProjectFilesScrollBar());
         this.scrollFilesProject.getHorizontalScrollBar().setUI(new PingProjectFilesScrollBar());
@@ -143,7 +188,7 @@ public class mainForm {
         if (this.noOpenedFileTextLabel != null)
             this.noOpenedFileTextLabel.setForeground(PingThemeManager.getFontColor());
 
-        URL iconURL = null;
+        URL iconURL;
 
         if (PingThemeManager.theme.equals(PingThemeManager.Theme.DARK)) {
             iconURL = getClass().getClassLoader().getResource("Double view.png");
@@ -152,13 +197,71 @@ public class mainForm {
         }
 
         ImageIcon icon = new ImageIcon(iconURL, "Close this file");
-        this.button1.setIcon(icon);
+        this.splitButton.setIcon(icon);
+    }
+
+    public static void moveFileTabToFileTab(mainForm form, JTabbedPane sourcePane, JTabbedPane destPane, int sourceIndex) {
+        // Close the selected tab
+        PingTabFileComponent tab = (PingTabFileComponent) sourcePane.getTabComponentAt(sourceIndex);
+        int i = sourcePane.indexOfTabComponent(tab);
+        sourcePane.remove(i);
+
+        // Open the tab on the left screen
+        OpenedFileMenu fileMenu = new OpenedFileMenu(tab.getMenu());
+        LeftClickMenuFilesTree.openFileTab(fileMenu, form, destPane);
+
+        // Apply current text and edition status
+        fileMenu.tabComponent.setEdited(tab.getEdited());
+        //this.tabComponent.setEdited(oldOpenedFile.tabComponent.getEdited());
+
+    }
+
+    public void openCloseSplitView() {
+        if (!this.isSplitViewEnabled()) {
+
+            // Only do something if there is 2 tabs already open (+1 default no opened file tab)
+            if (this.getFilesTabs().getTabCount() < 3)
+                return;
+
+            this.splitView.setResizeWeight(0.5);
+            this.splitView.setDividerSize(10);
+            this.splitView.resetToPreferredSizes();
+
+            moveFileTabToFileTab(this, this.getFilesTabs(), this.getFilesTabs2(), this.getFilesTabs().getSelectedIndex());
+
+            this.splitViewEnabled = true;
+        } else {
+
+            if (this.getFocusedFilesTab().equals(this.getFilesTabs())) {
+                // Move the current opened file in the First File tab to the Second screen
+                // only if there is more than 1 file opened in the first tab
+                if (this.getFocusedFilesTab().getTabCount() > 2) {
+                    moveFileTabToFileTab(this, this.getFilesTabs(), this.getFilesTabs2(), this.getFilesTabs().getSelectedIndex());
+                }
+            } else {
+                // Move current opened file from the second screen to the first one
+                // close the second screen if there is no more opened tab
+                if (this.getFilesTabs2().getTabCount() > 0)
+                    moveFileTabToFileTab(this, this.getFilesTabs2(), this.getFilesTabs(), this.getFilesTabs2().getSelectedIndex());
+
+                if (this.getFilesTabs2().getTabCount() == 0) {
+                    // No more opened tab - close the view
+                    this.splitView.getRightComponent().setMinimumSize(new Dimension());
+                    this.splitView.setResizeWeight(1.0d);
+                    this.splitView.setDividerLocation(1.0d);
+                    this.splitView.setDividerSize(0);
+                    this.setFocusedFilesTab(this.getFilesTabs()); // refocus on the first tab
+
+                    this.splitViewEnabled = false;
+                }
+            }
+        }
     }
 
     public static void constructMainForm(String projectPath) {
 
         // Config Main Form
-        PingJFrame frame = new PingJFrame("Les Ricains Editor -- " + new File(projectPath).getName());
+        PingJFrame frame = new PingJFrame("Les Ricains Editor — " + new File(projectPath).getName());
         var form = new mainForm();
         frame.setContentPane(form.panel1);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -184,6 +287,7 @@ public class mainForm {
         form.scrollFilesProject.getVerticalScrollBar().setUI(new PingProjectFilesScrollBar());
         form.scrollFilesProject.getHorizontalScrollBar().setUI(new PingProjectFilesScrollBar());
         form.scrollFilesProject.setBorder(BorderFactory.createEmptyBorder());
+        form.splitView.setBorder(BorderFactory.createEmptyBorder());
 
         // Config file tabs + Add a text in the center of the app if no files is opened
         form.filesTabs.setUI(new PingTabbedPane());
@@ -191,7 +295,22 @@ public class mainForm {
         test.setFont(new Font("SF Pro", Font.BOLD, 13));
         test.setForeground(PingThemeManager.getFontColor());
         form.filesTabs.add(test);
+        form.setFocusedFilesTab(form.filesTabs);
         form.noOpenedFileTextLabel = test;
+
+        form.filesTabs2.setUI(new PingTabbedPane2());
+        form.splitView.setResizeWeight(1);
+        form.splitView.setDividerSize(0);
+
+        // Event triggered when tab change / Used by split view screen
+        form.filesTabs.addChangeListener(e -> form.setFocusedFilesTab((JTabbedPane) e.getSource()));
+        form.filesTabs2.addChangeListener(e -> form.setFocusedFilesTab((JTabbedPane) e.getSource()));
+        setupClickFocusedTabbed(form, form.filesTabs);
+        setupClickFocusedTabbed(form, form.filesTabs2);
+
+        // Split view button
+        form.splitButton.addActionListener(e -> form.openCloseSplitView());
+
 
         // Load project from project Path
         final File file = new File(projectPath);
@@ -285,29 +404,29 @@ public class mainForm {
         projectFilesText.setRequestFocusEnabled(true);
         projectFilesText.setText("PROJECT FILES");
         splitNameSplitButton.setLeftComponent(projectFilesText);
-        button1 = new JButton();
-        button1.setBorderPainted(false);
-        button1.setContentAreaFilled(false);
-        button1.setDoubleBuffered(false);
-        button1.setEnabled(true);
-        button1.setFocusable(true);
-        button1.setForeground(new Color(-13027653));
-        button1.setHideActionText(true);
-        button1.setHorizontalAlignment(4);
-        button1.setHorizontalTextPosition(0);
-        button1.setIcon(new ImageIcon(getClass().getResource("/Double view.png")));
-        button1.setIconTextGap(0);
-        button1.setMaximumSize(new Dimension(30, 30));
-        button1.setMinimumSize(new Dimension(30, 30));
-        button1.setName("Split view");
-        button1.setOpaque(false);
-        button1.setPreferredSize(new Dimension(30, 30));
-        button1.setRolloverEnabled(false);
-        button1.setSelected(false);
-        button1.setText("");
-        button1.setVerticalAlignment(0);
-        button1.putClientProperty("html.disable", Boolean.FALSE);
-        splitNameSplitButton.setRightComponent(button1);
+        splitButton = new JButton();
+        splitButton.setBorderPainted(false);
+        splitButton.setContentAreaFilled(false);
+        splitButton.setDoubleBuffered(false);
+        splitButton.setEnabled(true);
+        splitButton.setFocusable(true);
+        splitButton.setForeground(new Color(-13027653));
+        splitButton.setHideActionText(true);
+        splitButton.setHorizontalAlignment(4);
+        splitButton.setHorizontalTextPosition(0);
+        splitButton.setIcon(new ImageIcon(getClass().getResource("/Double view.png")));
+        splitButton.setIconTextGap(0);
+        splitButton.setMaximumSize(new Dimension(30, 30));
+        splitButton.setMinimumSize(new Dimension(30, 30));
+        splitButton.setName("Split view");
+        splitButton.setOpaque(false);
+        splitButton.setPreferredSize(new Dimension(30, 30));
+        splitButton.setRolloverEnabled(false);
+        splitButton.setSelected(false);
+        splitButton.setText("");
+        splitButton.setVerticalAlignment(0);
+        splitButton.putClientProperty("html.disable", Boolean.FALSE);
+        splitNameSplitButton.setRightComponent(splitButton);
         scrollFilesProject = new JScrollPane();
         splitFilesTree.setRightComponent(scrollFilesProject);
         projectFiles = new JTree();
@@ -322,6 +441,8 @@ public class mainForm {
         projectFiles.putClientProperty("JTree.lineStyle", "");
         projectFiles.putClientProperty("html.disable", Boolean.FALSE);
         scrollFilesProject.setViewportView(projectFiles);
+        splitView = new JSplitPane();
+        splitMainView.setRightComponent(splitView);
         filesTabs = new JTabbedPane();
         filesTabs.setBackground(new Color(-15329770));
         filesTabs.setFocusTraversalPolicyProvider(false);
@@ -332,7 +453,12 @@ public class mainForm {
         filesTabs.setTabLayoutPolicy(1);
         filesTabs.setTabPlacement(1);
         filesTabs.setVisible(true);
-        splitMainView.setRightComponent(filesTabs);
+        splitView.setLeftComponent(filesTabs);
+        filesTabs2 = new JTabbedPane();
+        filesTabs2.setBackground(new Color(-15329770));
+        filesTabs2.setEnabled(true);
+        filesTabs2.setTabLayoutPolicy(1);
+        splitView.setRightComponent(filesTabs2);
     }
 
     /**

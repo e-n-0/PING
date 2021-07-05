@@ -81,11 +81,22 @@ public abstract class PingMenuFactory {
                     mainForm mainForm = pingFrame.getForm();
                     mainForm.setFormColors();
 
-                    var tabCount = mainForm.getFilesTabs().getTabCount();
-                    for (int i = 1; i < tabCount; i++) {
-                        PingTabFileComponent tab = (PingTabFileComponent) mainForm.getFilesTabs().getTabComponentAt(i);
-                        tab.getMenu().setFormColors();
+                    {
+                        var tabCount = mainForm.getFilesTabs().getTabCount();
+                        for (int i = 1; i < tabCount; i++) {
+                            PingTabFileComponent tab = (PingTabFileComponent) mainForm.getFilesTabs().getTabComponentAt(i);
+                            tab.getMenu().setFormColors();
+                        }
                     }
+
+                    {
+                        var tabCount = mainForm.getFilesTabs2().getTabCount();
+                        for (int i = 1; i < tabCount; i++) {
+                            PingTabFileComponent tab = (PingTabFileComponent) mainForm.getFilesTabs2().getTabComponentAt(i);
+                            tab.getMenu().setFormColors();
+                        }
+                    }
+
                 }
                 catch(Exception ee){}
 

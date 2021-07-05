@@ -71,7 +71,7 @@
                       <text value="PROJECT FILES"/>
                     </properties>
                   </component>
-                  <component id="764b1" class="javax.swing.JButton" binding="button1" default-binding="true">
+                  <component id="764b1" class="javax.swing.JButton" binding="splitButton">
                     <constraints>
                       <splitpane position="right"/>
                     </constraints>
@@ -130,23 +130,44 @@
               </scrollpane>
             </children>
           </splitpane>
-          <tabbedpane id="51d83" binding="filesTabs">
+          <splitpane id="803b5" binding="splitView">
             <constraints>
               <splitpane position="right"/>
             </constraints>
-            <properties>
-              <background color="-15329770"/>
-              <focusTraversalPolicyProvider value="false"/>
-              <font name="SF Pro Text" size="13" style="0"/>
-              <foreground color="-1"/>
-              <opaque value="true"/>
-              <tabLayoutPolicy value="1"/>
-              <tabPlacement value="1"/>
-              <visible value="true"/>
-            </properties>
+            <properties/>
             <border type="none"/>
-            <children/>
-          </tabbedpane>
+            <children>
+              <tabbedpane id="51d83" binding="filesTabs">
+                <constraints>
+                  <splitpane position="left"/>
+                </constraints>
+                <properties>
+                  <background color="-15329770"/>
+                  <focusTraversalPolicyProvider value="false"/>
+                  <font name="SF Pro Text" size="13" style="0"/>
+                  <foreground color="-1"/>
+                  <opaque value="true"/>
+                  <tabLayoutPolicy value="1"/>
+                  <tabPlacement value="1"/>
+                  <visible value="true"/>
+                </properties>
+                <border type="none"/>
+                <children/>
+              </tabbedpane>
+              <tabbedpane id="4ddc7" binding="filesTabs2">
+                <constraints>
+                  <splitpane position="right"/>
+                </constraints>
+                <properties>
+                  <background color="-15329770"/>
+                  <enabled value="true"/>
+                  <tabLayoutPolicy value="1"/>
+                </properties>
+                <border type="none"/>
+                <children/>
+              </tabbedpane>
+            </children>
+          </splitpane>
         </children>
       </splitpane>
     </children>

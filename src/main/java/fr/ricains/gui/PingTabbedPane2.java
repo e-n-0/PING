@@ -1,11 +1,10 @@
 package fr.ricains.gui;
 
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.*;
 
-public class PingTabbedPane extends BasicTabbedPaneUI {
+public class PingTabbedPane2 extends BasicTabbedPaneUI {
 
     @Override
     protected JButton createScrollButton(int direction) {
@@ -39,17 +38,13 @@ public class PingTabbedPane extends BasicTabbedPaneUI {
 
     @Override
     protected int calculateTabWidth(int tabPlacement, int tabIndex, FontMetrics metrics) {
-
-        if(tabIndex == 0)
-            return 0;
-
         var width = super.calculateTabWidth(tabPlacement, tabIndex, metrics);
         return width-5;
     }
 
     @Override
     protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
-        if(tabIndex == 1)
+        if(tabIndex == 0)
             return;
 
         g.setColor(PingThemeManager.tabBorderBetween()); // Border between 2 tabs

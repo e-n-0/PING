@@ -1,6 +1,7 @@
 package fr.ricains.gui;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -11,6 +12,30 @@ public class LeftClickMenuFilesTree implements MouseListener {
     public LeftClickMenuFilesTree(mainForm form)
     {
         this.form = form;
+    }
+
+    public static void openFileTab(OpenedFileMenu newMenu, mainForm form, JTabbedPane pane)
+    {
+        if(newMenu.error)
+        {
+            // An error occured when opening the file
+            JOptionPane.showMessageDialog(null,
+                    "Failed to open the file \"" + newMenu.getFile().getName() + "\"",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        pane.addTab(newMenu.getFile().getName(), newMenu.getPanel());
+        var indexLastTab = pane.getTabCount() - 1;
+        pane.setTabComponentAt(indexLastTab, new PingTabFileComponent(pane));
+        pane.setSelectedIndex(indexLastTab);
+
+        PingTabFileComponent pingTab = (PingTabFileComponent) pane.getTabComponentAt(indexLastTab);
+        pingTab.setMenu(newMenu);
+        pingTab.setFilePath(newMenu.getFile().getAbsolutePath());
+        newMenu.tabComponent = pingTab;
+        newMenu.form = form;
     }
 
     @Override
@@ -40,12 +65,13 @@ public class LeftClickMenuFilesTree implements MouseListener {
                 return;
 
             // Search in opened files if this isn't already opened
-            var tabCount = form.getFilesTabs().getTabCount();
+            var focusedFilesTabs = form.getFocusedFilesTab();
+            var tabCount = focusedFilesTabs.getTabCount();
             for (int i = 1; i < tabCount; i++) {
-                PingTabFileComponent tab = (PingTabFileComponent) form.getFilesTabs().getTabComponentAt(i);
+                PingTabFileComponent tab = (PingTabFileComponent) focusedFilesTabs.getTabComponentAt(i);
                 if (tab.getFilePath().equals(fileSelected.getFile().getAbsolutePath())) {
                     // Already opened
-                    form.getFilesTabs().setSelectedIndex(i);
+                    focusedFilesTabs.setSelectedIndex(i);
                     return;
                 }
             }
@@ -53,24 +79,7 @@ public class LeftClickMenuFilesTree implements MouseListener {
             System.out.println(fileSelected.getFile().getAbsolutePath());
 
             var newMenu = new OpenedFileMenu(fileSelected.getFile());
-            if(newMenu.error)
-            {
-                // An error occured when opening the file
-                JOptionPane.showMessageDialog(null,
-                        "Failed to open the file \"" + fileSelected.getFile().getName() + "\"",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            form.getFilesTabs().addTab(fileSelected.getFile().getName(), newMenu.getPanel());
-            var indexLastTab = form.getFilesTabs().getTabCount() - 1;
-            form.getFilesTabs().setTabComponentAt(indexLastTab, new PingTabFileComponent(form.getFilesTabs()));
-            form.getFilesTabs().setSelectedIndex(indexLastTab);
-
-            PingTabFileComponent pingTab = (PingTabFileComponent) form.getFilesTabs().getTabComponentAt(indexLastTab);
-            pingTab.setMenu(newMenu);
-            pingTab.setFilePath(fileSelected.getFile().getAbsolutePath());
-            newMenu.tabComponent = pingTab;
+            openFileTab(newMenu, form, focusedFilesTabs);
         }
     }
 

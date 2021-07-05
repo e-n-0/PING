@@ -127,6 +127,18 @@ public class PingTabFileComponent extends JPanel {
             addActionListener(this);
         }
 
+        private void closeTab(int i)
+        {
+            pane.remove(i);
+
+            // Left screen - Close the view if all tab are closed
+            if(pane.getUI() instanceof PingTabbedPane2)
+            {
+                if(pane.getTabCount() == 0)
+                    menu.form.openCloseSplitView();
+            }
+        }
+
         public void actionPerformed(ActionEvent e) {
             int i = pane.indexOfTabComponent(PingTabFileComponent.this);
             if (i != -1) {
@@ -135,10 +147,10 @@ public class PingTabFileComponent extends JPanel {
                     // Be sure to close the file without saving
                     var result = JOptionPane.showConfirmDialog(null, "This file have unsaved change.\nDo you want to close this file without saving?", "Unsaved changes", JOptionPane.YES_NO_OPTION);
                     if(result == JOptionPane.YES_OPTION)
-                        pane.remove(i);
+                        closeTab(i);
                 }
                 else
-                    pane.remove(i);
+                    closeTab(i);
             }
         }
 
