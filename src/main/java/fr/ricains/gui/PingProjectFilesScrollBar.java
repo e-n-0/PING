@@ -33,7 +33,7 @@ public class PingProjectFilesScrollBar extends BasicScrollBarUI {
 
     @Override
     protected void configureScrollBarColors() {
-        this.thumbColor = PingThemeManager.tabBackground();
+        this.thumbColor = PingThemeManager.tabCloseButtonSelected();
         this.trackColor = PingThemeManager.projectFileBackground();
     }
 

@@ -133,6 +133,13 @@ public class mainForm {
         this.scrollFilesProject.setBackground(PingThemeManager.projectFileBackground());
         this.projectFiles.setBackground(PingThemeManager.projectFileBackground());
 
+        this.scrollFilesProject.getVerticalScrollBar().setUI(new PingProjectFilesScrollBar());
+        this.scrollFilesProject.getHorizontalScrollBar().setUI(new PingProjectFilesScrollBar());
+
+        var frameCorner = scrollFilesProject.getCorner(JScrollPane.LOWER_RIGHT_CORNER);
+        if (frameCorner != null)
+            frameCorner.setBackground(PingThemeManager.projectFileBackground());
+
         if (this.noOpenedFileTextLabel != null)
             this.noOpenedFileTextLabel.setForeground(PingThemeManager.getFontColor());
 
