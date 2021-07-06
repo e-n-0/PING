@@ -62,11 +62,10 @@ public class OpenedFileMenu {
         changeColorScheme(textArea);
     }
 
-    private String getStyleForExtension(String extension)
-    {
-        switch (extension)
-        {
-            case "java": return SyntaxConstants.SYNTAX_STYLE_JAVA;
+    private String getStyleForExtension(String extension) {
+        switch (extension) {
+            case "java":
+                return SyntaxConstants.SYNTAX_STYLE_JAVA;
             case "c":
             case "h":
                 return SyntaxConstants.SYNTAX_STYLE_C;
@@ -78,19 +77,26 @@ public class OpenedFileMenu {
             case "hxx":
                 return SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS;
 
-            case "cs": return SyntaxConstants.SYNTAX_STYLE_CSHARP;
+            case "cs":
+                return SyntaxConstants.SYNTAX_STYLE_CSHARP;
 
-            case "css": return SyntaxConstants.SYNTAX_STYLE_CSS;
+            case "css":
+                return SyntaxConstants.SYNTAX_STYLE_CSS;
 
-            case "html": return SyntaxConstants.SYNTAX_STYLE_HTML;
+            case "html":
+                return SyntaxConstants.SYNTAX_STYLE_HTML;
 
-            case "js": return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
+            case "js":
+                return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
 
-            case "ts": return SyntaxConstants.SYNTAX_STYLE_TYPESCRIPT;
+            case "ts":
+                return SyntaxConstants.SYNTAX_STYLE_TYPESCRIPT;
 
-            case "json": return SyntaxConstants.SYNTAX_STYLE_JSON;
+            case "json":
+                return SyntaxConstants.SYNTAX_STYLE_JSON;
 
-            case "xml": return SyntaxConstants.SYNTAX_STYLE_XML;
+            case "xml":
+                return SyntaxConstants.SYNTAX_STYLE_XML;
 
             case "yaml":
             case "yml":
@@ -101,13 +107,17 @@ public class OpenedFileMenu {
             case "ktm":
                 return SyntaxConstants.SYNTAX_STYLE_KOTLIN;
 
-            case "md": return SyntaxConstants.SYNTAX_STYLE_MARKDOWN;
+            case "md":
+                return SyntaxConstants.SYNTAX_STYLE_MARKDOWN;
 
-            case "php": return SyntaxConstants.SYNTAX_STYLE_PHP;
+            case "php":
+                return SyntaxConstants.SYNTAX_STYLE_PHP;
 
-            case "py": return SyntaxConstants.SYNTAX_STYLE_PYTHON;
+            case "py":
+                return SyntaxConstants.SYNTAX_STYLE_PYTHON;
 
-            default: return SyntaxConstants.SYNTAX_STYLE_NONE;
+            default:
+                return SyntaxConstants.SYNTAX_STYLE_NONE;
         }
     }
 
@@ -179,6 +189,10 @@ public class OpenedFileMenu {
         textArea.revalidate();
 
         changeColorScheme(textArea);
+
+        // Remove "Pliage" menu and separator from the right click menu
+        textArea.getPopupMenu().remove(9);
+        textArea.getPopupMenu().remove(9);
 
         cp.add(sp);
         newPanel = cp;
