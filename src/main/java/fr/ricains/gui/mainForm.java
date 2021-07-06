@@ -316,26 +316,11 @@ public class mainForm {
         form.splitButton.addActionListener(e -> form.openCloseSplitView());
 
         // Load project from project Path
-        /*final File file = new File(projectPath);
-        System.out.println(file);
-        final MyFile mf = new MyFile(file);
-        form.projectFiles.setModel(new FileTreeModel(mf));
-        form.projectFiles.setEditable(true);
-        form.projectFiles.addMouseListener(new LeftClickMenuFilesTree(form));*/
-
-        //form.projectFiles.setCellRenderer(new TreeCellRenderer());
-        //form.projectFiles.setEditable(true);
-        //form.projectFiles.setRootVisible(false);
-
-        //form.projectFiles = new FileTree();
         FileTree fileTree = (FileTree) form.projectFiles;
         fileTree.setDeleteEnabled(true);
         fileTree.initComponents(projectPath);
         fileTree.initListeners(form);
         fileTree.setEditable(true);
-
-
-        //
 
         // Deny the possibility to edit a cell with a triple click (only with right click -> 'rename')
         DefaultTreeCellEditor editor = new DefaultTreeCellEditor(form.projectFiles, (DefaultTreeCellRenderer) form.projectFiles.getCellRenderer()) {

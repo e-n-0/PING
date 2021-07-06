@@ -20,6 +20,12 @@ public class PingTabFileComponent extends JPanel {
     private JLabel label;
     private JButton button;
 
+    private mainForm form;
+
+    public mainForm getForm() {
+        return form;
+    }
+
     public String getFilePath() {
         return filePath;
     }
@@ -47,13 +53,14 @@ public class PingTabFileComponent extends JPanel {
         this.menu = menu;
     }
 
-    public PingTabFileComponent(final JTabbedPane pane) {
+    public PingTabFileComponent(final JTabbedPane pane, mainForm form) {
         //unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         if (pane == null) {
             throw new NullPointerException("TabbedPane is null");
         }
         this.pane = pane;
+        this.form = form;
         setOpaque(false);
 
         //make JLabel read titles from JTabbedPane
@@ -81,6 +88,50 @@ public class PingTabFileComponent extends JPanel {
 
         this.button = button;
         this.label = label;
+
+        var myself = this;
+
+        addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int selfIndex = pane.indexOfTabComponent(myself);
+                pane.setSelectedIndex(selfIndex);
+
+                if (e.getButton() == MouseEvent.BUTTON3)
+                {
+                    JPopupMenu popup = new JPopupMenu();
+
+                    popup.add(new AbstractAction("Split view") {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            myself.getForm().openCloseSplitView();
+                        }
+                    });
+
+                    popup.show(myself, e.getX(), e.getY());
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
     }
 
     @Override

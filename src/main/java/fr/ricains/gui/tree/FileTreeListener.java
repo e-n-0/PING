@@ -121,7 +121,7 @@ public class FileTreeListener extends MouseAdapter {
 
         pane.addTab(newMenu.getFile().getName(), newMenu.getPanel());
         var indexLastTab = pane.getTabCount() - 1;
-        pane.setTabComponentAt(indexLastTab, new PingTabFileComponent(pane));
+        pane.setTabComponentAt(indexLastTab, new PingTabFileComponent(pane, form));
         pane.setSelectedIndex(indexLastTab);
 
         PingTabFileComponent pingTab = (PingTabFileComponent) pane.getTabComponentAt(indexLastTab);
