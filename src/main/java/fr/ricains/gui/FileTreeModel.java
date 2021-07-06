@@ -15,6 +15,7 @@ class FileTreeModel implements TreeModel {
     public FileTreeModel(final MyFile pFile) {
         mFile = pFile;
     }
+
     @Override public Object getRoot() {
         return mFile;
     }
@@ -99,6 +100,7 @@ class FileTreeModel implements TreeModel {
             l.treeStructureChanged(event);
         }
     }
+
 }
 
 class MyFile {

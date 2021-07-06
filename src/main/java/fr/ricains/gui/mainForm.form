@@ -110,7 +110,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="715a4" class="javax.swing.JTree" binding="projectFiles">
+                  <component id="715a4" class="javax.swing.JTree" binding="projectFiles" custom-create="true">
                     <constraints/>
                     <properties>
                       <autoscrolls value="false"/>

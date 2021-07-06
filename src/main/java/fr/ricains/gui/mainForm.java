@@ -1,8 +1,12 @@
 package fr.ricains.gui;
 
+import fr.ricains.gui.tree.FileTree;
+import fr.ricains.gui.tree.FileTreeNode;
+
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellEditor;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
@@ -311,15 +315,25 @@ public class mainForm {
         // Split view button
         form.splitButton.addActionListener(e -> form.openCloseSplitView());
 
-
         // Load project from project Path
-        final File file = new File(projectPath);
+        /*final File file = new File(projectPath);
         System.out.println(file);
         final MyFile mf = new MyFile(file);
-        form.projectFiles.setCellRenderer(new TreeCellRenderer());
         form.projectFiles.setModel(new FileTreeModel(mf));
         form.projectFiles.setEditable(true);
-        form.projectFiles.addMouseListener(new LeftClickMenuFilesTree(form));
+        form.projectFiles.addMouseListener(new LeftClickMenuFilesTree(form));*/
+
+        //form.projectFiles.setCellRenderer(new TreeCellRenderer());
+        //form.projectFiles.setEditable(true);
+        //form.projectFiles.setRootVisible(false);
+
+        //form.projectFiles = new FileTree();
+        FileTree fileTree = (FileTree) form.projectFiles;
+        fileTree.setDeleteEnabled(true);
+        fileTree.initComponents(projectPath);
+
+
+        //
 
         // Deny the possibility to edit a cell with a triple click (only with right click -> 'rename')
         DefaultTreeCellEditor editor = new DefaultTreeCellEditor(form.projectFiles, (DefaultTreeCellRenderer) form.projectFiles.getCellRenderer()) {
@@ -357,6 +371,7 @@ public class mainForm {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
+        createUIComponents();
         panel1 = new JPanel();
         panel1.setLayout(new GridBagLayout());
         panel1.setBackground(new Color(-16181241));
@@ -429,7 +444,6 @@ public class mainForm {
         splitNameSplitButton.setRightComponent(splitButton);
         scrollFilesProject = new JScrollPane();
         splitFilesTree.setRightComponent(scrollFilesProject);
-        projectFiles = new JTree();
         projectFiles.setAutoscrolls(false);
         projectFiles.setBackground(new Color(-14408668));
         Font projectFilesFont = this.$$$getFont$$$("SF Pro", Font.PLAIN, 13, projectFiles.getFont());
@@ -490,4 +504,8 @@ public class mainForm {
         return panel1;
     }
 
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+        projectFiles = new FileTree();
+    }
 }
