@@ -1,6 +1,7 @@
 package fr.ricains.gui;
 
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import org.apache.commons.io.FilenameUtils;
 import org.fife.rsta.ac.LanguageSupport;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.rsta.ac.java.JavaCompletionProvider;
@@ -59,7 +60,55 @@ public class OpenedFileMenu {
         newPanel.setForeground(PingThemeManager.getFontColor());
 
         changeColorScheme(textArea);
+    }
 
+    private String getStyleForExtension(String extension)
+    {
+        switch (extension)
+        {
+            case "java": return SyntaxConstants.SYNTAX_STYLE_JAVA;
+            case "c":
+            case "h":
+                return SyntaxConstants.SYNTAX_STYLE_C;
+
+            case "cc":
+            case "cpp":
+            case "cxx":
+            case "hh":
+            case "hxx":
+                return SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS;
+
+            case "cs": return SyntaxConstants.SYNTAX_STYLE_CSHARP;
+
+            case "css": return SyntaxConstants.SYNTAX_STYLE_CSS;
+
+            case "html": return SyntaxConstants.SYNTAX_STYLE_HTML;
+
+            case "js": return SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT;
+
+            case "ts": return SyntaxConstants.SYNTAX_STYLE_TYPESCRIPT;
+
+            case "json": return SyntaxConstants.SYNTAX_STYLE_JSON;
+
+            case "xml": return SyntaxConstants.SYNTAX_STYLE_XML;
+
+            case "yaml":
+            case "yml":
+                return SyntaxConstants.SYNTAX_STYLE_YAML;
+
+            case "kt":
+            case "kts":
+            case "ktm":
+                return SyntaxConstants.SYNTAX_STYLE_KOTLIN;
+
+            case "md": return SyntaxConstants.SYNTAX_STYLE_MARKDOWN;
+
+            case "php": return SyntaxConstants.SYNTAX_STYLE_PHP;
+
+            case "py": return SyntaxConstants.SYNTAX_STYLE_PYTHON;
+
+            default: return SyntaxConstants.SYNTAX_STYLE_NONE;
+        }
     }
 
     private void configOpenedFileMenu(File file) {
@@ -78,7 +127,7 @@ public class OpenedFileMenu {
 
         RSyntaxTextArea textArea = new RSyntaxTextArea(20, 60);
         this.textArea = textArea;
-        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+        textArea.setSyntaxEditingStyle(getStyleForExtension(FilenameUtils.getExtension(file.getName())));
         textArea.setCodeFoldingEnabled(true);
         RTextScrollPane sp = new RTextScrollPane(textArea);
         this.scrollPane = sp;
