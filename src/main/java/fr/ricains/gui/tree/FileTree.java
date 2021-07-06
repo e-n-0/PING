@@ -20,6 +20,7 @@
 package fr.ricains.gui.tree;
 
 import fr.ricains.gui.PingThemeManager;
+import fr.ricains.gui.mainForm;
 
 import java.awt.*;
 import java.io.File;
@@ -29,11 +30,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JTree;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.filechooser.FileSystemView;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
+import javax.swing.tree.*;
 
 /**
  * A handy little class that displays the system filesystem in a tree view.
@@ -44,14 +44,17 @@ public class FileTree extends JTree {
     /** Creates a new instance of FileTree */
     public FileTree() {
         super(new DefaultTreeModel(new DefaultMutableTreeNode("root")));
+        setModel(new FileTreeModel(new DefaultMutableTreeNode("root")));
+
         fileTreeModel = (DefaultTreeModel)treeModel;
         showHiddenFiles = true;
         showFiles = true;
         navigateOSXApps = false;
         
         //initComponents();
-        initListeners();
+        //initListeners();
     }
+
     
     /**
      * returns the data model used by the FileTree. This method returns the same value
@@ -117,7 +120,7 @@ public class FileTree extends JTree {
     /**
      * sets up the listeners for the tree
      */
-    private void initListeners() {
+    public void initListeners(mainForm form) {
         addTreeExpansionListener(new TreeExpansionListener() {
             public void treeCollapsed(TreeExpansionEvent event) {
             }
@@ -130,8 +133,9 @@ public class FileTree extends JTree {
             }
         });
         
-        FileTreeListener ftl = new FileTreeListener(this);
+        FileTreeListener ftl = new FileTreeListener(this, form);
         addMouseListener(ftl);
+
     }
     
     /**
@@ -447,4 +451,31 @@ public class FileTree extends JTree {
          */
         private JFileChooser fileChooser;
     }
+
+    private class FileTreeModel extends DefaultTreeModel
+    {
+
+        public FileTreeModel(TreeNode root) {
+            super(root);
+        }
+
+        @Override
+        public void valueForPathChanged(TreePath path, Object newValue) {
+            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)path.getLastPathComponent();
+            FileTreeNode fileTreeNode = (FileTreeNode)treeNode.getUserObject();
+
+            final File oldFile = fileTreeNode.file;
+            final String newName = (String) newValue;
+            final File newFile = new File(oldFile.getParentFile(), newName);
+            oldFile.renameTo(newFile);
+            fileTreeNode.setFile(newFile);
+
+            //System.out.println("Renamed '" + oldFile + "' to '" + fileTreeNode.file + "'.");
+
+           nodeChanged(treeNode);
+           //treeNode.setUserObject(fileTreeNode);
+
+        }
+    }
+
 }

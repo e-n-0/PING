@@ -19,6 +19,11 @@
 
 package fr.ricains.gui.tree;
 
+import fr.ricains.gui.*;
+
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -28,10 +33,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
@@ -40,15 +42,26 @@ import javax.swing.tree.TreePath;
  * @author Arash Payan (http://www.arashpayan.com)
  */
 public class FileTreeListener extends MouseAdapter {
-    
+
+    mainForm form;
+
+    public mainForm getForm() {
+        return form;
+    }
+
+    public void setForm(mainForm form) {
+        this.form = form;
+    }
+
     /**
      * Creates a new instance of FileTreeListener
      * @param fileTree the <code>FileTree</code> to listen for
      */
-    public FileTreeListener(FileTree fileTree) {
+    public FileTreeListener(FileTree fileTree, mainForm form) {
         if (fileTree == null)
             throw new IllegalArgumentException("Null argument not allowed");
-        
+
+        this.form = form;
         this.fileTree = fileTree;
     }
 
@@ -59,23 +72,104 @@ public class FileTreeListener extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3)
             rightClick(e.getX(), e.getY());
+        else if(e.getButton() == MouseEvent.BUTTON1)
+            leftClick(e.getX(), e.getY());
     }
-    
-    /**
-     * 
-     * @param x the x coordinate of the mouse when it was pressed
-     * @param y the y coordinate of the mouse when it was pressed
-     */
-    private void rightClick(int x, int y) {
+
+    private void leftClick(int x, int y) {
+
         TreePath treePath = fileTree.getPathForLocation(x, y);
-        if (treePath == null)
+        if(treePath == null)
             return;
 
-        
+        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
+        FileTreeNode fileTreeNode = (FileTreeNode)treeNode.getUserObject();
+
+        if(fileTreeNode.file.isDirectory())
+            return;
+
+        // Search in opened files if this isn't already opened
+        var focusedFilesTabs = form.getFocusedFilesTab();
+        var tabCount = focusedFilesTabs.getTabCount();
+        for (int i = 1; i < tabCount; i++) {
+            PingTabFileComponent tab = (PingTabFileComponent) focusedFilesTabs.getTabComponentAt(i);
+            if (tab.getFilePath().equals(fileTreeNode.file.getAbsolutePath())) {
+                // Already opened
+                focusedFilesTabs.setSelectedIndex(i);
+                return;
+            }
+        }
+
+        System.out.println(fileTreeNode.file.getAbsolutePath());
+
+        var newMenu = new OpenedFileMenu(fileTreeNode.file);
+        openFileTab(newMenu, form, focusedFilesTabs);
+
+    }
+
+    public static void openFileTab(OpenedFileMenu newMenu, mainForm form, JTabbedPane pane)
+    {
+        if(newMenu.error)
+        {
+            // An error occured when opening the file
+            JOptionPane.showMessageDialog(null,
+                    "Failed to open the file \"" + newMenu.getFile().getName() + "\"",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        pane.addTab(newMenu.getFile().getName(), newMenu.getPanel());
+        var indexLastTab = pane.getTabCount() - 1;
+        pane.setTabComponentAt(indexLastTab, new PingTabFileComponent(pane));
+        pane.setSelectedIndex(indexLastTab);
+
+        PingTabFileComponent pingTab = (PingTabFileComponent) pane.getTabComponentAt(indexLastTab);
+        pingTab.setMenu(newMenu);
+        pingTab.setFilePath(newMenu.getFile().getAbsolutePath());
+        newMenu.tabComponent = pingTab;
+        newMenu.form = form;
+    }
+
+
+    /**
+         *
+         * @param x the x coordinate of the mouse when it was pressed
+         * @param y the y coordinate of the mouse when it was pressed
+         */
+    private void rightClick(int x, int y) {
+        TreePath treePath = fileTree.getPathForLocation(x, y);
+
+        DefaultMutableTreeNode treeNode;
+
+        // Right click in the JTree - Root node
+        boolean isRoot = false;
+        if (treePath == null)
+        {
+            treeNode = (DefaultMutableTreeNode) fileTree.getFileTreeModel().getRoot();
+            isRoot = true;
+        }
+        else
+            treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
+
+
+
         JPopupMenu popup = new JPopupMenu();
-        
-        popup.add(new DeleteFileAction(treePath));
-        popup.add(new CreateFileAction(treePath));
+
+        popup.add(new CreateFolderAction(treeNode));
+        popup.add(new CreateFileAction(treeNode));
+
+        if(!isRoot)
+        {
+            popup.addSeparator();
+
+            popup.add(new CopyNameAction(treeNode));
+            popup.add(new RenameAction(treePath));
+            popup.add(new DeleteFileAction(treeNode));
+        }
+
+
+
         popup.show(fileTree, x, y);
     }
     
@@ -83,17 +177,17 @@ public class FileTreeListener extends MouseAdapter {
      * the <code>FileTree</code> to listen on
      */
     private FileTree fileTree;
-    
-    /**
-     * feature not implemented
-     */
+
     private class RenameAction extends AbstractAction {
+
+        private TreePath treePath;
+        private FileTreeNode fileTreeNode;
 
         public RenameAction(TreePath treePath) {
             this.treePath = treePath;
-            
+
             putValue(Action.NAME, "Rename");
-            
+
             DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
             fileTreeNode = (FileTreeNode)treeNode.getUserObject();
             if (!fileTreeNode.file.canWrite())
@@ -103,19 +197,43 @@ public class FileTreeListener extends MouseAdapter {
         public void actionPerformed(ActionEvent e) {
             fileTree.startEditingAtPath(treePath);
         }
-        
-        private TreePath treePath;
-        private FileTreeNode fileTreeNode;
     }
+
+    private class CopyNameAction extends AbstractAction {
+
+        private FileTreeNode fileTreeNode;
+        private DefaultMutableTreeNode treeNode;
+
+        public CopyNameAction(DefaultMutableTreeNode treeNode) {
+            this.treeNode = treeNode;
+
+            putValue(Action.NAME, "Copy");
+
+            // DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
+            fileTreeNode = (FileTreeNode)treeNode.getUserObject();
+            if (!fileTreeNode.file.canWrite())
+                setEnabled(false);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            StringSelection selection = new StringSelection(fileTreeNode.file.getName());
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(selection, null);
+        }
+    }
+
 
     private class CreateFileAction extends AbstractAction {
 
-        public CreateFileAction(TreePath treePath) {
-            this.treePath = treePath;
+        private FileTreeNode fileTreeNode;
+        private DefaultMutableTreeNode treeNode;
+
+        public CreateFileAction(DefaultMutableTreeNode treeNode) {
+            this.treeNode = treeNode;
 
             putValue(Action.NAME, "Create new File");
 
-            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
+            // DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
             fileTreeNode = (FileTreeNode)treeNode.getUserObject();
             if (!fileTreeNode.file.canWrite())
                 setEnabled(false);
@@ -130,13 +248,11 @@ public class FileTreeListener extends MouseAdapter {
             boolean success = true;
             File newFile;
 
-            //var parent = this.treePath
-
             if (fileTreeNode.file.isDirectory())
             {
                 newFile = new File(fileTreeNode.file.getAbsolutePath() + File.separator + "New File.txt");
                 if(newFile.exists())
-                    newFile = createUniqueFilenameFile(fileTreeNode.file.getAbsolutePath());
+                    newFile = createUniqueFilenameFile(fileTreeNode.file.getAbsolutePath(), "New File.txt");
 
                 try {
                     success = newFile.createNewFile();
@@ -150,7 +266,7 @@ public class FileTreeListener extends MouseAdapter {
             {
                 newFile = new File(fileTreeNode.file.getParentFile().getAbsolutePath() + File.separator + "New File.txt");
                 if(newFile.exists())
-                    newFile = createUniqueFilenameFile(fileTreeNode.file.getParentFile().getAbsolutePath());
+                    newFile = createUniqueFilenameFile(fileTreeNode.file.getParentFile().getAbsolutePath(), "New File.txt");
 
                 try {
                     success = newFile.createNewFile();
@@ -163,46 +279,88 @@ public class FileTreeListener extends MouseAdapter {
             if (success)
             {
                 var newNode = new DefaultMutableTreeNode(new FileTreeNode(newFile));
-
-                fileTree.getFileTreeModel().insertNodeInto(newNode, (DefaultMutableTreeNode)treePath.getLastPathComponent(), 0);
-                //fileTree.getFileTreeModel().removeNodeFromParent(
-                //        (DefaultMutableTreeNode)treePath.getLastPathComponent());
+                fileTree.getFileTreeModel().insertNodeInto(newNode, (DefaultMutableTreeNode)this.treeNode, 0);
             }
 
         }
-
-        /**
-         * The <code>TreePath</code> to the node that will be deleted.
-         */
-        private TreePath treePath;
-        /**
-         * The <code>FileTreeNode</code> stored inside the <code>DefaultMutableTreeNode</code>'s
-         * user object
-         */
-        private FileTreeNode fileTreeNode;
     }
 
+    private class CreateFolderAction extends AbstractAction {
+        private FileTreeNode fileTreeNode;
+        private DefaultMutableTreeNode treeNode;
 
-    private class DeleteFileAction extends AbstractAction {
-        /**
-         * constructor for the action to delete a file or directory
-         * @param treePath the treepath of the node to act on
-         */
-        public DeleteFileAction(TreePath treePath) {
-            this.treePath = treePath;
+        public CreateFolderAction(DefaultMutableTreeNode treeNode) {
+            this.treeNode = treeNode;
 
-            putValue(Action.NAME, "Remove");
-            
-            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
+            putValue(Action.NAME, "Create new Folder");
+
+            // DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
             fileTreeNode = (FileTreeNode)treeNode.getUserObject();
             if (!fileTreeNode.file.canWrite())
                 setEnabled(false);
         }
 
-        /**
-         * the action called when the user wants to delete a file or directory
-         * @param e information about the event that caused this method to be called
-         */
+        public void actionPerformed(ActionEvent e) {
+
+            boolean success;
+            File newFile;
+
+            if (fileTreeNode.file.isDirectory())
+            {
+                newFile = new File(fileTreeNode.file.getAbsolutePath() + File.separator + "New Folder");
+                if(newFile.exists())
+                    newFile = createUniqueFilenameFile(fileTreeNode.file.getAbsolutePath(), "New Folder");
+
+                try {
+                    success = newFile.mkdir();
+                } catch (Exception ioException) {
+                    ioException.printStackTrace();
+                    success = false;
+
+                }
+            }
+            else
+            {
+                newFile = new File(fileTreeNode.file.getParentFile().getAbsolutePath() + File.separator + "New Folder");
+                if(newFile.exists())
+                    newFile = createUniqueFilenameFile(fileTreeNode.file.getParentFile().getAbsolutePath(), "New Folder");
+
+                try {
+                    success = newFile.mkdir();
+                } catch (Exception ioException) {
+                    ioException.printStackTrace();
+                    success = false;
+                }
+            }
+
+            if (success)
+            {
+                var newNode = new DefaultMutableTreeNode(new FileTreeNode(newFile));
+                var parentNode = (DefaultMutableTreeNode)treeNode.getParent();
+                if(parentNode == null) // Null if it's the root
+                    parentNode = treeNode;
+
+                fileTree.getFileTreeModel().insertNodeInto(newNode, parentNode, 0);
+            }
+
+        }
+    }
+
+    private class DeleteFileAction extends AbstractAction {
+        private FileTreeNode fileTreeNode;
+        private DefaultMutableTreeNode treeNode;
+
+        public DeleteFileAction(DefaultMutableTreeNode treeNode) {
+            this.treeNode = treeNode;
+
+            putValue(Action.NAME, "Remove");
+            
+            // DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
+            fileTreeNode = (FileTreeNode)treeNode.getUserObject();
+            if (!fileTreeNode.file.canWrite())
+                setEnabled(false);
+        }
+
         public void actionPerformed(ActionEvent e) {
             int choice = JOptionPane.showConfirmDialog(fileTree.getRootPane(),
                     "Are you sure you want to delete '" + fileTreeNode.file.getName()+"'?",
@@ -220,17 +378,11 @@ public class FileTreeListener extends MouseAdapter {
             
             if (success)
             {
-                fileTree.getFileTreeModel().removeNodeFromParent(
-                        (DefaultMutableTreeNode)treePath.getLastPathComponent());
+                fileTree.getFileTreeModel().removeNodeFromParent(treeNode);
             }
                 
         }
-        
-        /**
-         * deletes a directory and its content
-         * @param dir The directory to delete
-         * @return true on success, false otherwise
-         */
+
         private boolean deleteDirectory(File dir) {
             if (dir == null || !dir.exists() || !dir.isDirectory())
                 return false;
@@ -255,34 +407,33 @@ public class FileTreeListener extends MouseAdapter {
             
             return success;
         }
-        
-        /**
-         * The <code>TreePath</code> to the node that will be deleted.
-         */
-        private TreePath treePath;
-        /**
-         * The <code>FileTreeNode</code> stored inside the <code>DefaultMutableTreeNode</code>'s
-         * user object
-         */
-        private FileTreeNode fileTreeNode;
     }
 
-    private File createUniqueFilenameFile(String pathStr)
+    private File createUniqueFilenameFile(String pathStr, String fileName)
     {
-        String fileName = "New File.txt";
+        //String fileName = "New File.txt";
 
         String extension = "";
         String name = "";
 
         int idxOfDot = fileName.lastIndexOf('.');   //Get the last index of . to separate extension
-        extension = fileName.substring(idxOfDot + 1);
-        name = fileName.substring(0, idxOfDot);
+        if(idxOfDot == -1)
+            name = fileName;
+        else
+        {
+            extension = fileName.substring(idxOfDot + 1);
+            name = fileName.substring(0, idxOfDot);
+        }
 
         Path path = Paths.get(pathStr + File.separator + fileName);
         int counter = 1;
 
         while(Files.exists(path)){
-            fileName = name+" ("+counter+")."+extension;
+            if(extension.equals(""))
+                fileName = name + " (" + counter + ")";
+            else
+                fileName = name + " (" + counter + ")." + extension;
+
             path = Paths.get(pathStr + File.separator + fileName);
             counter++;
         }

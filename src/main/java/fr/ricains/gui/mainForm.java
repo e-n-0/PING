@@ -331,6 +331,8 @@ public class mainForm {
         FileTree fileTree = (FileTree) form.projectFiles;
         fileTree.setDeleteEnabled(true);
         fileTree.initComponents(projectPath);
+        fileTree.initListeners(form);
+        fileTree.setEditable(true);
 
 
         //

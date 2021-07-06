@@ -39,6 +39,10 @@ public class FileTreeNode {
         this.file = file;
     }
 
+    public void setFile(File file) {
+        this.file = file;
+    }
+
     /**
      * returns the representation of this <code>File</code> best suited for use in
      * the <code>FileTree</code>.
