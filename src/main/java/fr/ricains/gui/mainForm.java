@@ -235,12 +235,32 @@ public class mainForm {
             this.splitViewEnabled = true;
         } else {
 
+            System.out.println(this.getFocusedFilesTab().getTabCount());
+
             if (this.getFocusedFilesTab().equals(this.getFilesTabs())) {
                 // Move the current opened file in the First File tab to the Second screen
                 // only if there is more than 1 file opened in the first tab
                 if (this.getFocusedFilesTab().getTabCount() > 2) {
                     moveFileTabToFileTab(this, this.getFilesTabs(), this.getFilesTabs2(), this.getFilesTabs().getSelectedIndex());
                 }
+                // If all tabs on the left are closed, move all tabs from the right screen to the left
+                else if (this.getFilesTabs().getTabCount() == 1) {
+                    System.out.println("OUI ALL");
+                    var nbrTabsToMove = this.getFilesTabs2().getTabCount();
+                    while (nbrTabsToMove-- > 0)
+                        moveFileTabToFileTab(this, this.getFilesTabs2(), this.getFilesTabs(), 0);
+
+                    // We don't need the second screen anymore
+                    // No more opened tab - close the view
+                    this.splitView.getRightComponent().setMinimumSize(new Dimension());
+                    this.splitView.setResizeWeight(1.0d);
+                    this.splitView.setDividerLocation(1.0d);
+                    //this.splitView.setDividerSize(0);
+                    this.setFocusedFilesTab(this.getFilesTabs()); // refocus on the first tab
+
+                    this.splitViewEnabled = false;
+                }
+
             } else {
                 // Move current opened file from the second screen to the first one
                 // close the second screen if there is no more opened tab
