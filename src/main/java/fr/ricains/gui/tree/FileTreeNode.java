@@ -19,6 +19,9 @@
 
 package fr.ricains.gui.tree;
 
+import fr.ricains.gui.PingThemeManager;
+
+import java.awt.*;
 import java.io.File;
 
 /**
@@ -36,11 +39,16 @@ public class FileTreeNode {
         if (file == null)
             throw new IllegalArgumentException("Null file not allowed");
 
+        this.color = PingThemeManager.getFontColor();
         this.file = file;
     }
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     /**
@@ -90,5 +98,6 @@ public class FileTreeNode {
      * the hex string that represents 'Network' in Vista
      */
     public static final String WINDOWSVISTA_NETWORK = "::{F02C1A0D-BE21-4350-88B0-7367FC96EF3C}";
-    
+
+    public Color color;
 }

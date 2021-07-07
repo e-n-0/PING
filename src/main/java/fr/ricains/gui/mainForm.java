@@ -1,18 +1,26 @@
 package fr.ricains.gui;
 
+import fr.epita.assistants.myide.ricains.entity.aspects.GitAspect;
+import fr.epita.assistants.myide.ricains.entity.features.RicainsExecutionReport;
+import fr.epita.assistants.utils.Log;
 import fr.ricains.gui.tree.FileTree;
 import fr.ricains.gui.tree.FileTreeNode;
+import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.StatusCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellEditor;
-import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.Locale;
 
@@ -33,7 +41,12 @@ public class mainForm {
 
     private JTabbedPane focusedFilesTab;
 
+    private JFrame internalFrame;
+    private File projectFilePath;
+
     private boolean splitViewEnabled = false;
+
+    private boolean hasGit = false;
 
     public boolean isSplitViewEnabled() {
         return splitViewEnabled;
@@ -201,7 +214,43 @@ public class mainForm {
 
         ImageIcon icon = new ImageIcon(iconURL, "Close this file");
         this.splitButton.setIcon(icon);
+
+        try {
+            FileTree.FileTreeModel model = (FileTree.FileTreeModel) this.projectFiles.getModel();
+            getVisibleNodes(this.scrollFilesProject, this.projectFiles).forEach(node ->
+                    {
+                        FileTreeNode fileTreeNode = (FileTreeNode) node.getUserObject();
+                        fileTreeNode.setColor(PingThemeManager.getFontColor());
+                        model.updateNode(node);
+                    }
+            );
+        } catch (Exception ignored) {
+        }
+
     }
+
+    public static void openFileTab(OpenedFileMenu newMenu, mainForm form, JTabbedPane pane) {
+        if (newMenu.error) {
+            // An error occured when opening the file
+            JOptionPane.showMessageDialog(null,
+                    "Failed to open the file \"" + newMenu.getFile().getName() + "\"",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        pane.addTab(newMenu.getFile().getName(), newMenu.getPanel());
+        var indexLastTab = pane.getTabCount() - 1;
+        pane.setTabComponentAt(indexLastTab, new PingTabFileComponent(pane, form));
+        pane.setSelectedIndex(indexLastTab);
+
+        PingTabFileComponent pingTab = (PingTabFileComponent) pane.getTabComponentAt(indexLastTab);
+        pingTab.setMenu(newMenu);
+        pingTab.setFilePath(newMenu.getFile().getAbsolutePath());
+        newMenu.tabComponent = pingTab;
+        newMenu.form = form;
+    }
+
 
     public static void moveFileTabToFileTab(mainForm form, JTabbedPane sourcePane, JTabbedPane destPane, int sourceIndex) {
         // Close the selected tab
@@ -211,7 +260,7 @@ public class mainForm {
 
         // Open the tab on the left screen
         OpenedFileMenu fileMenu = new OpenedFileMenu(tab.getMenu());
-        LeftClickMenuFilesTree.openFileTab(fileMenu, form, destPane);
+        openFileTab(fileMenu, form, destPane);
 
         // Apply current text and edition status
         fileMenu.tabComponent.setEdited(tab.getEdited());
@@ -273,7 +322,7 @@ public class mainForm {
                     this.splitView.setResizeWeight(1.0d);
                     this.splitView.setDividerLocation(1.0d);
                     //this.splitView.setDividerSize(0);
-                    this.setFocusedFilesTab(this.getFilesTabs()); // refocus on the first tab
+                    this.setFocusedFilesTab(this.getFilesTabs()); // refocus on the first tabd
 
                     this.splitViewEnabled = false;
                 }
@@ -281,10 +330,93 @@ public class mainForm {
         }
     }
 
+    public static java.util.List<DefaultMutableTreeNode> getVisibleNodes(JScrollPane hostingScrollPane, JTree hostingJTree) {
+        //Find the first and last visible row within the scroll pane.
+        final Rectangle visibleRectangle = hostingScrollPane.getViewport().getViewRect();
+        final int firstRow = hostingJTree.getClosestRowForLocation(visibleRectangle.x, visibleRectangle.y);
+        final int lastRow = hostingJTree.getClosestRowForLocation(visibleRectangle.x, visibleRectangle.y + visibleRectangle.height);
+        //Iterate through each visible row, identify the object at this row, and add it to a result list.
+        java.util.List<DefaultMutableTreeNode> resultList = new ArrayList<DefaultMutableTreeNode>();
+        for (int currentRow = firstRow; currentRow <= lastRow; currentRow++) {
+            TreePath currentPath = hostingJTree.getPathForRow(currentRow);
+            Object lastPathObject = currentPath.getLastPathComponent();
+            //if (lastPathObject instanceof TreeNode){
+            resultList.add((DefaultMutableTreeNode) lastPathObject);
+            //}
+        }
+        return (resultList);
+    }
+
+
+    private static void threadCheckGit(final Git git, final mainForm form) throws Exception {
+        while (form.internalFrame.isDisplayable()) {
+            Thread.sleep(3000);
+
+            Status status = git.status().call();
+            var newFiles = status.getUntracked().stream()
+                    .map(str -> Path.of(form.projectFilePath.getAbsolutePath(), str).toString()).toList();
+            var editedFiles = status.getUncommittedChanges().stream()
+                    .map(str -> Path.of(form.projectFilePath.getAbsolutePath(), str).toString()).toList();
+
+            FileTree.FileTreeModel model = (FileTree.FileTreeModel) form.projectFiles.getModel();
+
+            // Update JTree
+            getVisibleNodes(form.scrollFilesProject, form.projectFiles).forEach(node ->
+            {
+                FileTreeNode fileTreeNode = (FileTreeNode) node.getUserObject();
+                if (newFiles.contains(fileTreeNode.file.getAbsolutePath())) {
+                    fileTreeNode.setColor(PingThemeManager.fontColorGitUntracked());
+                    model.updateNode(node);
+                } else if (editedFiles.contains(fileTreeNode.file.getAbsolutePath())) {
+                    fileTreeNode.setColor(PingThemeManager.fontColorGitChange());
+                    model.updateNode(node);
+                }
+            });
+
+            // Update Opened Tabs
+            // tab 1
+            for (int i = 1; i < form.getFilesTabs().getTabCount(); i++) {
+                PingTabFileComponent tab = (PingTabFileComponent) form.getFilesTabs().getTabComponentAt(i);
+                if (newFiles.contains(tab.getFilePath()))
+                    tab.setGitStatus(2);
+                else if (editedFiles.contains(tab.getFilePath()))
+                    tab.setGitStatus(1);
+                else
+                    tab.setGitStatus(0);
+            }
+
+            // tab 2
+            for (int i = 0; i < form.getFilesTabs2().getTabCount(); i++) {
+                PingTabFileComponent tab = (PingTabFileComponent) form.getFilesTabs2().getTabComponentAt(i);
+                if (newFiles.contains(tab.getFilePath()))
+                    tab.setGitStatus(2);
+                else if (editedFiles.contains(tab.getFilePath()))
+                    tab.setGitStatus(1);
+                else
+                    tab.setGitStatus(0);
+            }
+
+
+        }
+    }
+
+    private void checkGitChanges(File gitFile) throws Exception {
+        final Git git = Git.init().setDirectory(gitFile.getParentFile()).call();
+
+        new Thread(() -> {
+            try {
+                threadCheckGit(git, this);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }).start();
+    }
+
     public static void constructMainForm(String projectPath) {
 
         // Config Main Form
-        PingJFrame frame = new PingJFrame("Les Ricains Editor — " + new File(projectPath).getName());
+        File projectRootFile = new File(projectPath);
+        PingJFrame frame = new PingJFrame("Les Ricains Editor — " + projectRootFile.getName());
         var form = new mainForm();
         frame.setContentPane(form.panel1);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -292,6 +424,8 @@ public class mainForm {
         frame.pack();
         frame.setForm(form);
         form.setFormColors();
+        form.internalFrame = frame;
+        form.projectFilePath = projectRootFile;
 
         // Set the Window in the center of the screen
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -341,6 +475,19 @@ public class mainForm {
         fileTree.initComponents(projectPath);
         fileTree.initListeners(form);
         fileTree.setEditable(true);
+
+        // Detect if there is a git inited in the project folder
+        Path gitFile = Path.of(projectRootFile.getPath(), ".git");
+        if (gitFile.toFile().exists())
+            form.hasGit = true;
+
+        if (form.hasGit) {
+            try {
+                form.checkGitChanges(gitFile.toFile());
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
 
         // Deny the possibility to edit a cell with a triple click (only with right click -> 'rename')
         DefaultTreeCellEditor editor = new DefaultTreeCellEditor(form.projectFiles, (DefaultTreeCellRenderer) form.projectFiles.getCellRenderer()) {

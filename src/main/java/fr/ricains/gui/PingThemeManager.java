@@ -109,4 +109,17 @@ public abstract class PingThemeManager {
             return new Color(199, 156, 0);
     }
 
+    public static Color fontColorGitUntracked()
+    {
+        if(theme.equals(Theme.DARK))
+            return new Color(78, 146, 207);
+        else
+            return Color.blue;
+    }
+
+    public static Color fontColorGitChange()
+    {
+        return circleFileChange();
+    }
+
 }

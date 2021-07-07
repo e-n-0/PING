@@ -419,12 +419,15 @@ public class FileTree extends JTree {
          */
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
-            
+
+            setForeground(PingThemeManager.getFontColor());
+
             Object userObject = ((DefaultMutableTreeNode)value).getUserObject();
             if (userObject instanceof FileTreeNode)
             {
                 FileTreeNode fileTreeNode = (FileTreeNode)userObject;
-                
+                setForeground(fileTreeNode.color);
+
                 if (!Constants.isWindows)
                 {
                     try { setIcon(fileChooser.getIcon(fileTreeNode.file)); }
@@ -437,7 +440,6 @@ public class FileTree extends JTree {
                 }
             }
 
-            setForeground(PingThemeManager.getFontColor());
             setBackground(PingThemeManager.projectFileBackground());
             setBackgroundSelectionColor(PingThemeManager.tabBackgroundSelected());
             setBackgroundNonSelectionColor(PingThemeManager.projectFileBackground());
@@ -452,11 +454,16 @@ public class FileTree extends JTree {
         private JFileChooser fileChooser;
     }
 
-    private class FileTreeModel extends DefaultTreeModel
+    public class FileTreeModel extends DefaultTreeModel
     {
 
         public FileTreeModel(TreeNode root) {
             super(root);
+        }
+
+        public void updateNode(DefaultMutableTreeNode node)
+        {
+            nodeChanged(node);
         }
 
         @Override

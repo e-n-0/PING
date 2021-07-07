@@ -17,6 +17,11 @@ public class PingTabFileComponent extends JPanel {
     private String filePath;
     private Boolean isEdited = false;
 
+    // 0 normal
+    // 1 commitChanged
+    // 2 untracked
+    private int gitStatus = 0;
+
     private JLabel label;
     private JButton button;
 
@@ -32,6 +37,10 @@ public class PingTabFileComponent extends JPanel {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public void setGitStatus(int gitStatus) {
+        this.gitStatus = gitStatus;
     }
 
     public void setEdited(Boolean edited) {
@@ -153,6 +162,14 @@ public class PingTabFileComponent extends JPanel {
             g2d.draw(circleShape);
             g2d.fill(circleShape);
         }
+
+        if(this.gitStatus == 0)
+            this.label.setForeground(PingThemeManager.getFontColor());
+        else if(this.gitStatus == 1)
+            this.label.setForeground(PingThemeManager.fontColorGitChange());
+        else if(this.gitStatus == 2)
+            this.label.setForeground(PingThemeManager.fontColorGitUntracked());
+
     }
 
     private class TabButton extends JButton implements ActionListener {

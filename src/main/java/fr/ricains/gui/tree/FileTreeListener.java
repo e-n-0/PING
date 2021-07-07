@@ -340,7 +340,7 @@ public class FileTreeListener extends MouseAdapter {
                 if(parentNode == null) // Null if it's the root
                     parentNode = treeNode;
 
-                fileTree.getFileTreeModel().insertNodeInto(newNode, parentNode, 0);
+                fileTree.getFileTreeModel().insertNodeInto(newNode, treeNode, 0);
             }
 
         }
