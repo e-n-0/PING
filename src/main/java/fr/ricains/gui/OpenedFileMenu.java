@@ -122,17 +122,6 @@ public class OpenedFileMenu {
     }
 
     private void configOpenedFileMenu(File file) {
-        LanguageSupportFactory lsf = LanguageSupportFactory.get();
-        LanguageSupport support = lsf.getSupportFor(SyntaxConstants.SYNTAX_STYLE_JAVA);
-        JavaLanguageSupport jls = (JavaLanguageSupport) support;
-        // TODO: This API will change! It will be easier to do per-editor
-        // changes to the build path.
-        try {
-            jls.getJarManager().addClassFileSource(new JDK9ClasspathLibraryInfo());
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
         JPanel cp = new JPanel(new BorderLayout());
 
         RSyntaxTextArea textArea = new RSyntaxTextArea(20, 60);
@@ -141,6 +130,21 @@ public class OpenedFileMenu {
         textArea.setCodeFoldingEnabled(true);
         RTextScrollPane sp = new RTextScrollPane(textArea);
         this.scrollPane = sp;
+
+        if (textArea.getSyntaxEditingStyle().equals(SyntaxConstants.SYNTAX_STYLE_JAVA)) {
+            LanguageSupportFactory lsf = LanguageSupportFactory.get();
+            LanguageSupport support = lsf.getSupportFor(SyntaxConstants.SYNTAX_STYLE_JAVA);
+            JavaLanguageSupport jls = (JavaLanguageSupport) support;
+            // TODO: This API will change! It will be easier to do per-editor
+            // changes to the build path.
+            try {
+                jls.getJarManager().addClassFileSource(new JDK9ClasspathLibraryInfo());
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+
+            jls.install(textArea);
+        }
 
         sp.setBorder(BorderFactory.createEmptyBorder());
 
@@ -167,7 +171,6 @@ public class OpenedFileMenu {
         textArea.setTabsEmulated(true);
         ToolTipManager.sharedInstance().registerComponent(textArea);
 
-        jls.install(textArea);
 
         JavaCompletionProvider provider = new JavaCompletionProvider();
         provider.setAutoActivationRules(true, null);
