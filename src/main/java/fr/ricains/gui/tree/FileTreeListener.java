@@ -113,8 +113,8 @@ public class FileTreeListener extends MouseAdapter {
         {
             // An error occured when opening the file
             JOptionPane.showMessageDialog(null,
-                    "Failed to open the file \"" + newMenu.getFile().getName() + "\"",
-                    "Error",
+                    "Impossible d'ouvrir le fichier \"" + newMenu.getFile().getName() + "\"",
+                    "Erreur",
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -186,7 +186,7 @@ public class FileTreeListener extends MouseAdapter {
         public RenameAction(TreePath treePath) {
             this.treePath = treePath;
 
-            putValue(Action.NAME, "Rename");
+            putValue(Action.NAME, "Renommer");
 
             DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
             fileTreeNode = (FileTreeNode)treeNode.getUserObject();
@@ -207,7 +207,7 @@ public class FileTreeListener extends MouseAdapter {
         public CopyNameAction(DefaultMutableTreeNode treeNode) {
             this.treeNode = treeNode;
 
-            putValue(Action.NAME, "Copy");
+            putValue(Action.NAME, "Copier");
 
             // DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
             fileTreeNode = (FileTreeNode)treeNode.getUserObject();
@@ -231,7 +231,7 @@ public class FileTreeListener extends MouseAdapter {
         public CreateFileAction(DefaultMutableTreeNode treeNode) {
             this.treeNode = treeNode;
 
-            putValue(Action.NAME, "Create new File");
+            putValue(Action.NAME, "Créer un nouveau fichier");
 
             // DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
             fileTreeNode = (FileTreeNode)treeNode.getUserObject();
@@ -292,7 +292,7 @@ public class FileTreeListener extends MouseAdapter {
         public CreateFolderAction(DefaultMutableTreeNode treeNode) {
             this.treeNode = treeNode;
 
-            putValue(Action.NAME, "Create new Folder");
+            putValue(Action.NAME, "Créer un nouveau dossier");
 
             // DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
             fileTreeNode = (FileTreeNode)treeNode.getUserObject();
@@ -353,7 +353,7 @@ public class FileTreeListener extends MouseAdapter {
         public DeleteFileAction(DefaultMutableTreeNode treeNode) {
             this.treeNode = treeNode;
 
-            putValue(Action.NAME, "Remove");
+            putValue(Action.NAME, "Supprimer");
             
             // DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)treePath.getLastPathComponent();
             fileTreeNode = (FileTreeNode)treeNode.getUserObject();
@@ -363,8 +363,8 @@ public class FileTreeListener extends MouseAdapter {
 
         public void actionPerformed(ActionEvent e) {
             int choice = JOptionPane.showConfirmDialog(fileTree.getRootPane(),
-                    "Are you sure you want to delete '" + fileTreeNode.file.getName()+"'?",
-                    "Confirm delete",
+                    "Êtes-vous sûr de vouloir supprimer '" + fileTreeNode.file.getName()+"'?",
+                    "Confirmer la suppression",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
             if (choice == 1)

@@ -16,8 +16,8 @@ public abstract class PingMenuFactory {
 
     private static JMenu createFileMenu(JFrame frame)
     {
-        JMenu menuFile = new JMenu("File");
-        JMenuItem openProject = new JMenuItem("Open new project folder");
+        JMenu menuFile = new JMenu("Fichier");
+        JMenuItem openProject = new JMenuItem("Ouvrir un nouveau dossier de projet");
 
         // Open new instance of mainForm on another Project Folder
         openProject.addActionListener(e ->
@@ -39,9 +39,9 @@ public abstract class PingMenuFactory {
             System.setProperty("apple.awt.fileDialogForDirectories", "false");
         });
 
-        JMenuItem saveCurrentFile = new JMenuItem("Save file");
+        JMenuItem saveCurrentFile = new JMenuItem("Sauvegarder le fichier");
         saveCurrentFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.META_DOWN_MASK));
-        saveCurrentFile.getAccessibleContext().setAccessibleDescription("Save the current opened file in the editor.");
+        saveCurrentFile.getAccessibleContext().setAccessibleDescription("Enregistrer le fichier actuellement ouvert dans l'éditeur.");
         saveCurrentFile.addActionListener(e -> SaveFile.save());
 
         menuFile.add(openProject);
@@ -53,8 +53,8 @@ public abstract class PingMenuFactory {
 
     private static JMenu createWindowMenu(JFrame frame)
     {
-        JMenu menuWindow = new JMenu("Window");
-        JMenuItem switchTheme = new JMenuItem("Switch to Dark/Light Theme");
+        JMenu menuWindow = new JMenu("Fenêtre");
+        JMenuItem switchTheme = new JMenuItem("Passer au thème sombre/clair");
 
         switchTheme.addActionListener(e ->
         {

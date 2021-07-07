@@ -176,7 +176,7 @@ public class PingTabFileComponent extends JPanel {
         public TabButton() {
             int size = 27;
             setPreferredSize(new Dimension(22, 22));
-            setToolTipText("Close this file");
+            setToolTipText("Fermer ce fichier");
             //Make the button looks the same for all Laf's
             setUI(new BasicButtonUI());
             //Make it transparent
@@ -212,7 +212,7 @@ public class PingTabFileComponent extends JPanel {
                 if(isEdited)
                 {
                     // Be sure to close the file without saving
-                    var result = JOptionPane.showConfirmDialog(null, "This file have unsaved change.\nDo you want to close this file without saving?", "Unsaved changes", JOptionPane.YES_NO_OPTION);
+                    var result = JOptionPane.showConfirmDialog(null, "Ce fichier a des modifications non sauvegardées..\nVoulez-vous fermer ce fichier sans l'enregistrer ?", "Modifications non sauvegardées", JOptionPane.YES_NO_OPTION);
                     if(result == JOptionPane.YES_OPTION)
                         closeTab(i);
                 }
@@ -233,7 +233,7 @@ public class PingTabFileComponent extends JPanel {
 
 
             URL imgURL = getClass().getClassLoader().getResource("Close.png");
-            ImageIcon icon = new ImageIcon(imgURL, "Close this file");
+            ImageIcon icon = new ImageIcon(imgURL, "Fermer ce fichier");
             try {
                 g.drawImage(ImageIO.read(imgURL), 6,6, this);
             } catch (IOException e) {

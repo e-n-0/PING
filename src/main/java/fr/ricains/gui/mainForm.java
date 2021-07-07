@@ -122,7 +122,7 @@ public class mainForm {
             public void windowClosing(WindowEvent we) {
                 if (hasSomeEditedFiles(form.getFilesTabs()) || hasSomeEditedFiles(form.getFilesTabs2())) {
                     String[] ObjButtons = {"Yes", "No"};
-                    int PromptResult = JOptionPane.showOptionDialog(null, "You have some unsaved files in the project.\nAre you sure you want to exit?", "Exit", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, ObjButtons, ObjButtons[1]);
+                    int PromptResult = JOptionPane.showOptionDialog(null, "Vous avez des fichiers non sauvegardés dans le projet.\nÊtes-vous sûr de vouloir quitter ?", "Quitter", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, ObjButtons, ObjButtons[1]);
                     if (PromptResult == JOptionPane.YES_OPTION) {
                         frame.dispose();
                     }
@@ -212,7 +212,7 @@ public class mainForm {
             iconURL = getClass().getClassLoader().getResource("Double view-white.png");
         }
 
-        ImageIcon icon = new ImageIcon(iconURL, "Close this file");
+        ImageIcon icon = new ImageIcon(iconURL, "Fermer ce fichier");
         this.splitButton.setIcon(icon);
 
         try {
@@ -233,8 +233,8 @@ public class mainForm {
         if (newMenu.error) {
             // An error occured when opening the file
             JOptionPane.showMessageDialog(null,
-                    "Failed to open the file \"" + newMenu.getFile().getName() + "\"",
-                    "Error",
+                    "Impossible d'ouvrir le fichier \"" + newMenu.getFile().getName() + "\"",
+                    "Erreur",
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -448,7 +448,7 @@ public class mainForm {
 
         // Config file tabs + Add a text in the center of the app if no files is opened
         form.filesTabs.setUI(new PingTabbedPane());
-        JLabel test = new JLabel("No file opened", SwingConstants.CENTER);
+        JLabel test = new JLabel("Aucun fichier ouvert", SwingConstants.CENTER);
         test.setFont(new Font("SF Pro", Font.BOLD, 13));
         test.setForeground(PingThemeManager.getFontColor());
         form.filesTabs.add(test);
