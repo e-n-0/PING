@@ -5,7 +5,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.*;
 
-public class PingTabbedPane extends BasicTabbedPaneUI {
+public class PingTabbedPaneLeft extends BasicTabbedPaneUI {
 
     @Override
     protected JButton createScrollButton(int direction) {

@@ -200,9 +200,9 @@ public class PingTabFileComponent extends JPanel {
             pane.remove(i);
 
             // Close the view if all tab are closed
-            if(pane.getUI() instanceof PingTabbedPane2 && pane.getTabCount() == 0)
+            if(pane.getUI() instanceof PingTabbedPaneRight && pane.getTabCount() == 0)
                 menu.form.openCloseSplitView();
-            else if(pane.getUI() instanceof PingTabbedPane && pane.getTabCount() == 1)
+            else if(pane.getUI() instanceof PingTabbedPaneLeft && pane.getTabCount() == 1)
                 menu.form.openCloseSplitView();
         }
 

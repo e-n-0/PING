@@ -2,11 +2,8 @@ package fr.ricains.gui;
 
 import fr.ricains.gui.tree.FileTree;
 import fr.ricains.gui.tree.FileTreeNode;
-import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.StatusCommand;
-import org.eclipse.jgit.api.errors.GitAPIException;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -444,7 +441,7 @@ public class mainForm {
         form.splitView.setBorder(BorderFactory.createEmptyBorder());
 
         // Config file tabs + Add a text in the center of the app if no files is opened
-        form.filesTabs.setUI(new PingTabbedPane());
+        form.filesTabs.setUI(new PingTabbedPaneLeft());
         JLabel test = new JLabel("Aucun fichier ouvert", SwingConstants.CENTER);
         test.setFont(new Font("SF Pro", Font.BOLD, 13));
         test.setForeground(PingThemeManager.getFontColor());
@@ -452,7 +449,7 @@ public class mainForm {
         form.setFocusedFilesTab(form.filesTabs);
         form.noOpenedFileTextLabel = test;
 
-        form.filesTabs2.setUI(new PingTabbedPane2());
+        form.filesTabs2.setUI(new PingTabbedPaneRight());
         form.splitView.setResizeWeight(1);
         form.splitView.setDividerSize(0);
         form.splitView.setContinuousLayout(true);

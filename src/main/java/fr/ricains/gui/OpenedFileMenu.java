@@ -279,7 +279,7 @@ public class OpenedFileMenu {
     }
 
     private void changeColorScheme(RSyntaxTextArea textArea) {
-        // Change a few things here and there.
+
         SyntaxScheme scheme = textArea.getSyntaxScheme();
 
         scheme.getStyle(Token.VARIABLE).foreground = new Color(137, 193, 224);

@@ -52,12 +52,6 @@ public class Main {
             System.exit(0);
         }
 
-        /*MyIde ide = new MyIde();
-        ProjectService projectService = ide.init(new Configuration(Paths.get("."), Paths.get(".")));
-        Path path = Paths.get(".");
-        Log.log(path.toAbsolutePath());
-        Project project = projectService.load(path);*/
-
         System.out.println(pathStr);
 
         try {
