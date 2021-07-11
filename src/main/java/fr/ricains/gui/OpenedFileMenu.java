@@ -281,29 +281,36 @@ public class OpenedFileMenu {
     private void changeColorScheme(RSyntaxTextArea textArea) {
         // Change a few things here and there.
         SyntaxScheme scheme = textArea.getSyntaxScheme();
-        scheme.getStyle(Token.RESERVED_WORD).foreground = new Color(78, 146, 207);
-        scheme.getStyle(Token.RESERVED_WORD_2).foreground = new Color(190, 130, 188);
-        scheme.getStyle(Token.DATA_TYPE).foreground = new Color(82, 206, 180);
-        scheme.getStyle(Token.ANNOTATION).foreground = new Color(82, 206, 180);
-        scheme.getStyle(Token.FUNCTION).foreground = new Color(207, 207, 156);
-        scheme.getStyle(Token.LITERAL_STRING_DOUBLE_QUOTE).foreground = new Color(180, 130, 104);
+
         scheme.getStyle(Token.VARIABLE).foreground = new Color(137, 193, 224);
 
+        scheme.getStyle(Token.FUNCTION).foreground = new Color(207, 207, 156);
+
+        scheme.getStyle(Token.DATA_TYPE).foreground = new Color(82, 206, 180);
+        scheme.getStyle(Token.ANNOTATION).foreground = new Color(82, 206, 180);
+
+        scheme.getStyle(Token.RESERVED_WORD_2).foreground = new Color(190, 130, 188);
+
+        scheme.getStyle(Token.RESERVED_WORD).foreground = new Color(78, 146, 207);
         scheme.getStyle(Token.LITERAL_BOOLEAN).foreground = new Color(78, 146, 207);
-
-        scheme.getStyle(Token.OPERATOR).foreground = PingThemeManager.getFontColor();
-        scheme.getStyle(Token.SEPARATOR).foreground = PingThemeManager.getFontColor();
-
-        //scheme.getStyle(Token.IDENTIFIER).foreground = Color.PINK;
 
         // Numbers
         scheme.getStyle(Token.LITERAL_NUMBER_DECIMAL_INT).foreground = new Color(158, 177, 143);
         scheme.getStyle(Token.LITERAL_NUMBER_FLOAT).foreground = new Color(158, 177, 143);
         scheme.getStyle(Token.LITERAL_NUMBER_HEXADECIMAL).foreground = new Color(158, 177, 143);
 
+        scheme.getStyle(Token.LITERAL_STRING_DOUBLE_QUOTE).foreground = new Color(180, 130, 104);
+
         // Comments
         scheme.getStyle(Token.COMMENT_EOL).foreground = new Color(93, 131, 69);
         scheme.getStyle(Token.COMMENT_DOCUMENTATION).foreground = new Color(93, 131, 69);
+
+        scheme.getStyle(Token.OPERATOR).foreground = PingThemeManager.getFontColor();
+        scheme.getStyle(Token.SEPARATOR).foreground = PingThemeManager.getFontColor();
+
+        //scheme.getStyle(Token.IDENTIFIER).foreground = Color.PINK;
+
+
 
         scheme.getStyle(Token.COMMENT_EOL).font = new Font("SF Pro", Font.PLAIN, 13);
 

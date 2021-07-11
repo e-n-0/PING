@@ -1,8 +1,5 @@
 package fr.ricains.gui;
 
-import fr.epita.assistants.myide.ricains.entity.aspects.GitAspect;
-import fr.epita.assistants.myide.ricains.entity.features.RicainsExecutionReport;
-import fr.epita.assistants.utils.Log;
 import fr.ricains.gui.tree.FileTree;
 import fr.ricains.gui.tree.FileTreeNode;
 import org.eclipse.jgit.api.CommitCommand;
